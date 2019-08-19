@@ -15,6 +15,10 @@
 
             $(function () {
 
+                $("select#select_PRS_code option").filter(function() {
+                         return this.value == "Neoplasm";
+             }).prop('selected', true);
+
 
                document.getElementById('pheinfo').style.visibility = "hidden";
 
@@ -22,13 +26,15 @@
 
 
                  var jsonData = JSON.parse('${resultJson}');
-                 var uniqPhecodesDesc = JSON.parse('${uniqPhecodesDesc}');
+                 var uniqPhecodesDesc =JSON.parse('${uniqPhecodesDesc}');
 
 
                 $("#select_PRS_code").change(function () {
                     var selectedItem = $(this).val();
                     var abc=$(this).val();
                     console.log(selectedItem);
+
+                    var phelist = [];
 
                     for (var i = 0; i < uniqPhecodesDesc.length; i++) {
                             var counter = uniqPhecodesDesc[i];
@@ -38,7 +44,7 @@
                             if(phnm === selectedItem)
                                 {
                                 $('#select_desc').empty(); //remove all child nodes
-                                $('#select_phenomes').empty();
+
 
                                     for (var j = 0; j < resobj.length; j++) {
                                         //console.log(resobj[j].phecodename);
@@ -47,6 +53,18 @@
                                         $('#select_desc').append(newOption);
                                         $('#select_desc').trigger("chosen:updated");
                                      }
+
+                                 //THis part is hardcoded for the first record just to avaoid the loop to run thro for the first prsweight and when user selects the another one it will go thro the Jsondata to find the prsstudy value
+   $                                                ('#select_phenomes').empty();
+                                                    var linephe = '<option value="MGI">MGI</option>';
+                                                    $('#select_phenomes').append(linephe);
+                                                    $('#select_phenomes').trigger("chosen:updated");
+
+
+
+
+
+
 
                                 }
                         }
@@ -136,7 +154,7 @@
 
                                    var phenome = resobj1[j].phenome;
                                    var phecode = resobj1[j].phecode.replace('X','');
-                                   var model = resobj1[j].model
+                                   var model = resobj1[j].model;
 
 
 
@@ -273,7 +291,7 @@
                            %{-- <g:form controller="DisplayData" action="showGraph" method="post" id="upform" name="upform" enctype="multipart/form-data">--}%
                                 <div class="drilldown mr-2">
                                <label for="select_PRS_code" class="mb-0">Phenotype Category</label><br/>
-                                    <g:select name="phenocat" id="select_PRS_code" class="form-control" from="${phenocat.phename}" value="Neurological">
+                                    <g:select name="phenocat" id="select_PRS_code" class="form-control" from="${phenocat.phename}">
 
                                             <option value="${phenocat.phename}">${phenocat.phename}</option>
                                     </g:select>
@@ -281,15 +299,18 @@
 
                                 <div class="drilldown mr-2">
                                <label for="select_desc" class="mb-0">PRS Weights</label>
-                                    <g:select name="select_desc" id="select_desc" class="form-control" from="${drilldown.outsource.unique()}" >
-                                        <option value="${drilldown.outsource}">${drilldown.outsource}</option>
+                                    <g:select name="select_desc" id="select_desc" class="form-control" from="" noSelection="['':'-Choose Phenotype Category-']">
+                                        <option value="">Choose Phenotype Category</option>
                                     </g:select>
+
+
+
                                 </div>
 
                                <div class="drilldown mr-2">
                                    <label for="select_phenomes"  class="form-check-label">PRS Study</label>
-                                    <g:select name="select_phenomes" id="select_phenomes" class="form-control" from="${drilldown.phenomes.unique()}" >
-                                        <option value="${drilldown.phenomes}">${drilldown.phenomes} </option>
+                                    <g:select name="select_phenomes" id="select_phenomes" class="form-control" from="" noSelection="['':'- Choose PRS weights-']">
+                                        <option value="${drilldown}">${drilldown.phenomes} </option>
                                     </g:select>
                                 </div>
 

@@ -9,8 +9,7 @@
     "bundle": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "license": "MIT",
-  "author": "Snehal Patil(snehal@med.umich.edu)",
+
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
@@ -23,6 +22,5 @@
   "dependencies": {
     "gradle-babel-asset-pipeline-helper": "^1.0.3",
     "react-dom": "^0.14.8"
-
   }
 }

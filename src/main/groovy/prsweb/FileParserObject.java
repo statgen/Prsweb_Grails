@@ -29,10 +29,11 @@ public class FileParserObject {
     Double cci1 ;
     Double cci2 ;
     Double lcogp ;
+    Double prsp ;
     Double cor ;
     Double csebata ;
 
-    public FileParserObject(String code, String pstring, String category, String grpnum, Integer numcases, int numcont, String sex, Double q1q2ci1, Double q1q2ci2, Double q1q2or, Double q1q3ci1, Double q1q3ci2, Double q1q3or, Double q1q4ci1, Double q1q4ci2, Double q1q4or, Double cbeta, Double cci1, Double cci2, Double lcogp, Double cor, Double csebata) {
+    public FileParserObject(String code, String pstring, String category, String grpnum, Integer numcases, Integer numcont, String sex, Double q1q2ci1, Double q1q2ci2, Double q1q2or, Double q1q3ci1, Double q1q3ci2, Double q1q3or, Double q1q4ci1, Double q1q4ci2, Double q1q4or, Double cbeta, Double cci1, Double cci2, Double lcogp, Double prsp, Double cor, Double csebata) {
         this.code = code;
         this.pstring = pstring;
         this.category = category;
@@ -53,8 +54,17 @@ public class FileParserObject {
         this.cci1 = cci1;
         this.cci2 = cci2;
         this.lcogp = lcogp;
+        this.prsp = prsp;
         this.cor = cor;
         this.csebata = csebata;
+    }
+
+    public Double getPrsp() {
+        return prsp;
+    }
+
+    public void setPrsp(Double prsp) {
+        this.prsp = prsp;
     }
 
     public String getCode() {

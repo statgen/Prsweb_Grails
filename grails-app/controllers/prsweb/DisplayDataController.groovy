@@ -6,6 +6,7 @@ package prsweb
 
 import com.google.gson.Gson
 import grails.converters.JSON
+import grails.util.Environment
 import jdk.nashorn.internal.runtime.JSONFunctions
 
 import javax.validation.ValidationException
@@ -20,12 +21,16 @@ import prsweb.FileParserObject
 import java.text.DecimalFormat
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import groovy.time.*
 
 //import static org.apache.http.HttpStatus.*
 
 class DisplayDataController {
 
     DisplayDataService displayDataService
+    // Export service provided by Export plugin
+    def exportService
+
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -216,8 +221,12 @@ THis part will be needed for the tree view
 
         def uniqPhecodesDesc = gson.toJson(uniquedescPhecode)
 
+
+
         //uniqPhecodesDesc.
-           // println(resultJson)
+       // println(uniquedescPhecode.findAll{ it.phenocatname.equals("Neoplasms")}.phecodetest)
+
+
 
 
         [drilldown:DisplayData.getAll(),resultJson:resultJson,phenocat:phenocat,uniqPhecodesDesc:uniqPhecodesDesc,jsonBuilder:jsonBuilder]
@@ -236,8 +245,12 @@ THis part will be needed for the tree view
 
     def showGraph() {
 
+        def timeStart = new Date()
+        def timereadingfiledone
+        def doneexobj
+
         LinkedHashMap<String, Object> datajson = new HashMap<>()
-        //println("params are $params")
+        println("params are $params")
         def inputprscode = params.phecode
         def inprscat = params.model.toString().toUpperCase()//source data eg. fingen
         def inprsstudy = params.phenome.toString()//eg MGI o UKB
@@ -246,8 +259,19 @@ THis part will be needed for the tree view
         def list = []
 
 
-        def datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
-        //def datadirpath = '/net/dumbo/home/snehal/deploy1/data/'
+        def datadirpath = ''
+        if (Environment.current == Environment.DEVELOPMENT) {
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
+        } else
+        if (Environment.current == Environment.TEST) {
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
+        } else
+        if (Environment.current == Environment.PRODUCTION) {
+            datadirpath = '/var/lib/tomcat8/webapps/data/'
+        }
+
+
+        //def
         def dir = new File(datadirpath+"phewas")
 
 
@@ -281,85 +305,65 @@ THis part will be needed for the tree view
         def phenocatObj = Phenotypecat.getAll()
         LinkedHashMap<String, Object> colcatmapr = new HashMap<>()
 
-        phenocatObj.each {colcatmapr.put(it.phename,it.color)}
+        def dbphecode
+        if(inputprscode.toString().contains("."))
+        {
 
-        def dbphecode = '%'+inputprscode.toString().substring(0,inputprscode.toString().indexOf("."))+'%'
+            dbphecode = '%'+inputprscode.toString().substring(0,inputprscode.toString().indexOf("."))+'%'
+        }
+        else
+        {
+            dbphecode = '%'+inputprscode.toString()
+        }
+
+
         //println("input dbphecode is $dbphecode")
         def displayObjselect = DisplayData.findAllByPhecodedataLike(dbphecode)
-
         LinkedHashMap<String, Object> pr = new HashMap<>()
-
-        //println("from the loop source $displayObjselect")
-
-
         Set<String> uniquecode = new HashSet<String>(displayObjselect.phecodedata);
-
         LinkedHashMap<String, Object> codemap = new HashMap<>()
-
         uniquecode.each{
-
-            //println("phecodedata is $it")
-
             def loopphecodedata = it
             def sourceSpeObje= displayObjselect.findAll { it.phecodedata.equals(loopphecodedata)}
-
             Set<String> uniquesrc = new HashSet<String>(sourceSpeObje.sourcedata);
             //println("uniqye source for this phecodedata is $uniquesrc")
-
             LinkedHashMap<String, Object> descmap = new HashMap<>()
-
-
-
             uniquesrc.each {
                 def loopsrcdata = it
-
-                //println("source is  is $loopsrcdata")
-
                 def srcdata = sourceSpeObje.findAll{ it.sourcedata.equals(loopsrcdata)}
-                //println("description for each source is $srcdata")
-
-
                 def list2= []
                 srcdata.each {
-
                     def desc = it.descdata
                     def studies = it.phenomes
                     list2 << ['info': desc, 'studies':studies]
                 }
-
                 descmap.put(loopsrcdata,list2)
-
-
-
             }
 
             codemap.put(loopphecodedata,descmap)
 
 
         }
-       // println("uniquecode $uniquecode")
 
+        //THis code is to get PRS_code_strings
+        LinkedHashMap<String, Object> prsstringmap = new HashMap<>()
+        uniquecode.each {prsstringmap.put(it.replace("X",""),Phecode.findByPhecodeid(it.replace("X","")).phecodedesc)}
+        datajson.put("PRS_code_strings",prsstringmap)
+        println("uniquecode $prsstringmap")
 
-
-        datajson.put("PRS_code_strings",displayObjselect.phecodedata)
+        //This code is to get color by category
+        phenocatObj.each {colcatmapr.put(it.phename,it.color)}
         datajson.put("color_by_category",colcatmapr)
 
-       // println(colcat)
+       //println(displayObjselect)
         datajson.put("drilldown",uniquecode)
-
-
-
-
-
-
-
         LinkedHashMap<String, Object> color_by_category = new HashMap<>()
 
 
 
         LinkedHashMap<String, Object> phewas_df = new HashMap<>()
 
-        JSONArray drilldown = new JSONArray()
+        /*JSONArray drilldown = new JSONArray()
         dir.eachFileRecurse(FileType.FILES) { file ->
             list << file
             //println(file.getName())
@@ -384,10 +388,10 @@ THis part will be needed for the tree view
 
 
 
-        //println(drilldown)
+        //println(gson.toJson(drilldown))*/
 
 //parse file name and check which matches the criteria..The file which matches the criteria will be added to the String phewasdf_json string and displayed to the user
-        String phewasdf_json= ''
+
 
 
         //this is for phewas_df
@@ -398,13 +402,26 @@ THis part will be needed for the tree view
         //sort the object first using groupnum and then phewas_code
         //create the list of individual columns and create hashmap
 
-        def fname, foundfname =''
+        def fname=''
+        def foundfname =''
+        String phewasdf_json= ''
+        ArrayList<FileParserObject> prsobjlist = new ArrayList<FileParserObject>()
+
+        def timeinmiddle = new Date()
+        TimeDuration duration = TimeCategory.minus(timeinmiddle, timeStart)
+        println("Before startign to read the file $duration")
 
         dir.eachFileRecurse(FileType.FILES) { file ->
             list << file
             //println(file.getName())
              fname = file.getName()
+
+                                                //Phecode153__GWAS-CATALOG-R2019-05-03__MGI-20190429__PRS-PheWAS_Results.txt
+
             Pattern p = Pattern.compile("Phecode(.*?)_(.*?)_(.*?)-[0-9]{8}_PRS-PheWAS_Results.txt");
+
+            //Pattern p = Pattern.compile("Phecode(.*?)__(.*?)__(.*?)-[0-9]{8}__PRS-PheWAS_Results.txt");
+            //Phecode153__GWAS-CATALOG-R2019-05-03__MGI-20190429__PRS-PheWAS_Results.txt
             Matcher m = p.matcher(fname);
             String prscode=''
             String prsstudy=''
@@ -415,6 +432,8 @@ THis part will be needed for the tree view
                 prssrc = m.group(2)
                 prsstudy = m.group(3)
 
+               // println("prscode"+prscode+"prssrc"+prssrc+"prsstudy"+prsstudy)
+
             } else {
                 //System.out.println("Did not fin the file $fname");
 
@@ -424,15 +443,14 @@ THis part will be needed for the tree view
 
             int testprint = 0
 
-            //System.out.println("prssrc is $prssrc and inprscat is $inprscat");
+                //System.out.println("prscode is $prscode prscode input $inputprscode is $prssrc and inprscat is $inprscat");
 
-
-            if (prscode.equals(inputprscode) && prssrc.equals(inprscat.toString().toUpperCase()) && prsstudy.equals(inprsstudy)) {
-               // println("found the file")
+            if (prscode.equals(inputprscode) && prssrc.contains(inprscat.toString().toUpperCase().replace("_","-")) && prsstudy.equals(inprsstudy)) {
+                //println("found the file")
                 //println(fname)
                 foundfname = fname
 
-                ArrayList<FileParserObject> prsobjlist = new ArrayList<FileParserObject>()
+
                 BufferedReader br = new BufferedReader(new FileReader(file))
                 String line
 
@@ -441,13 +459,19 @@ THis part will be needed for the tree view
                 String header= br.readLine()
                 String [] colname = header.split("\t")
                 HashMap<String, Integer> colorder = new HashMap<>()
+                // as the column is not fixed , try to find the index based on the name of the column
+
                 for(int k=0; k < colname.size(); k++)
                 {
                     colorder.put(colname[k],k)
                 }
-                //println(colorder)
+
+                def timereadingfilestart = new Date()
+                TimeDuration duration1 = TimeCategory.minus(timereadingfilestart, timeinmiddle)
+                println("after got the name of the file $duration1")
                 while ((line = br.readLine()) != null) {
                     String[] tokens = line.split("\t")
+
                     String code = tokens[colorder.get("phewas_code")]
                     String pstring = tokens[colorder.get("phewas_string")]
                     String category = tokens[colorder.get("group")]
@@ -475,6 +499,7 @@ THis part will be needed for the tree view
                     Double cci2 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_CI2")])).toDouble()
                     //Double lcogp = String.format("%.3f", sortPrsObject.str2neglog10(Double.parseDouble(tokens[colorder.get("PRS_LOGP")]))).toDouble()
                     Double lcogp = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_LOGP")])).toDouble()
+                    Double prsp = Double.parseDouble(tokens[colorder.get("PRS_P")])
                     Double cor = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_OR")])).toDouble()
                     Double csebata = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_SEBETA")])).toDouble()
                   /*  if(testprint == 0)
@@ -507,7 +532,7 @@ THis part will be needed for the tree view
                     }*/
 
                     testprint =  1
-                    FileParserObject tempfpo = new FileParserObject(code, pstring, category, grpnum, numcases, numcont, sex, q1q2ci1, q1q2ci2, q1q2or, q1q3ci1, q1q3ci2, q1q3or, q1q4ci1, q1q4ci2, q1q4or, cbeta, cci1, cci2, lcogp, cor, csebata)
+                    FileParserObject tempfpo = new FileParserObject(code, pstring, category, grpnum, numcases, numcont, sex, q1q2ci1, q1q2ci2, q1q2or, q1q3ci1, q1q3ci2, q1q3or, q1q4ci1, q1q4ci2, q1q4or, cbeta, cci1, cci2, lcogp, prsp,cor, csebata)
                     prsobjlist.add(tempfpo)
 
                 }
@@ -534,6 +559,13 @@ THis part will be needed for the tree view
                         // return u1.getCategory().compareTo(u2.getCategory());
                     }
                 });
+
+                timereadingfiledone = new Date()
+                TimeDuration duration2 = TimeCategory.minus(timereadingfiledone, timereadingfilestart)
+                println("done reading and sorted object $duration2")
+
+
+
 
 
 
@@ -597,28 +629,39 @@ THis part will be needed for the tree view
 
                 phewasdf_json = gson.toJson(phewas_df);
             }
+
         }
+
+        def donejson = new Date()
+        TimeDuration djason = TimeCategory.minus(donejson, timereadingfiledone)
+        println(" required to create the phewas df json $djason")
+
 
         //this is for phewas_df_excluded
         //*****************************************************************************************************************************************
 
 
-       //println(foundfname)
+       println(foundfname)
         String phewasexdf_json= ''
 
 
 
-                def exfilepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/phewas-exclusion/"+foundfname
+                def exfilepath = datadirpath +"phewas-exclusion/"+foundfname
+        println(exfilepath)
                 def phewas_ex_df_file=new File(exfilepath)
 
         LinkedHashMap<String, Object> phewas_ex_df = new HashMap<>()
+        ArrayList<FileParserObject> prsexobjlist = new ArrayList<FileParserObject>()
+
+        println("phewas exclusion file status ")
+        println(phewas_ex_df_file.exists())
+        println("***************************************")
 
         if(phewas_ex_df_file.exists())
         {
 
 
-           // println("exclusion file exists")
-            ArrayList<FileParserObject> prsexobjlist = new ArrayList<FileParserObject>()
+            println("exclusion file exists")
             BufferedReader brex = new BufferedReader(new FileReader(phewas_ex_df_file))
             String line
             //Parse the header to get the position of the column names so they are used to parse the data:
@@ -659,12 +702,13 @@ THis part will be needed for the tree view
                 Double cci2 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_CI2")])).toDouble()
                 //Double lcogp = String.format("%.3f", sortPrsObject.str2neglog10(Double.parseDouble(tokens[colorder.get("PRS_LOGP")]))).toDouble()
                 Double lcogp = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_LOGP")])).toDouble()
+                Double prsp =  Double.parseDouble(tokens[colorder.get("PRS_P")]).toBigDecimal()
                 Double cor = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_OR")])).toDouble()
                 Double csebata = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_SEBETA")])).toDouble()
 
 
 
-                FileParserObject tempfpo = new FileParserObject(code, pstring, category, grpnum, numcases, numcont, sex, q1q2ci1, q1q2ci2, q1q2or, q1q3ci1, q1q3ci2, q1q3or, q1q4ci1, q1q4ci2, q1q4or, cbeta, cci1, cci2, lcogp, cor, csebata)
+                FileParserObject tempfpo = new FileParserObject(code, pstring, category, grpnum, numcases, numcont, sex, q1q2ci1, q1q2ci2, q1q2or, q1q3ci1, q1q3ci2, q1q3or, q1q4ci1, q1q4ci2, q1q4or, cbeta, cci1, cci2, lcogp,prsp, cor, csebata)
                 prsexobjlist.add(tempfpo)
 
             }
@@ -693,6 +737,10 @@ THis part will be needed for the tree view
             });
 
 
+
+             doneexobj = new Date()
+            TimeDuration exobjtime = TimeCategory.minus(doneexobj, donejson)
+            println("done creating phewas ex df object and sortef $exobjtime")
 
             // println(prsobjlist.code)
             //println(prsobjlist.category)
@@ -767,22 +815,40 @@ THis part will be needed for the tree view
             //println("exclusion file doesnt exists")
         }
 
+        def exdfjson = new Date()
+        TimeDuration duration6 = TimeCategory.minus(exdfjson, doneexobj)
+        println("create json for phewas ex df $duration6")
+
         def check = phewas_df as JSON
         datajson.put("phewas_df",phewas_df)
         datajson.put("phewas_ex_df",phewas_ex_df)
 
         def dataRes = gson.toJson(datajson)
 
-        //rintln(phewasdf_json)
+        println()
+
+
+        //println()
+
+        if(params?.f && params.f != "html"){
+            response.contentType = grailsApplication.config.grails.mime.types[params.f]
+            response.setHeader("Content-disposition", "attachment; filename=books.${params.extension}")
+
+            exportService.export(params.format, response.outputStream,displayObjselect                                                               , [:], [:])
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        }
 
 
 
 
 
+        def endoffun = new Date()
+        TimeDuration duration3 = TimeCategory.minus(endoffun, timeStart)
+        println("Total duration:  $duration3")
 
 
-
-        [drilldown: drilldown, phewasdf_json: phewasdf_json,phewas_ex_df:phewasexdf_json,dataRes:dataRes]
+        [dataRes:dataRes,prsobjlist:prsobjlist.sort{a,b -> a.prsp <=> b.prsp},prsexobjlist:prsexobjlist]
 
 
     }

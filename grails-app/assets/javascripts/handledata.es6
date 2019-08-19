@@ -1,6 +1,8 @@
 'use strict';
 window._d = window._d || {};
 
+console.log("inside index data data");
+
 /*
 Note: example PheWAS: https://statgen.github.io/locuszoom/examples/phewas_scatter.html
                 code: https://github.com/statgen/locuszoom/blob/master/examples/phewas_scatter.html
@@ -100,7 +102,7 @@ const make_plots = data => {
 const make_scatter_plot = (df, title, color_by_category, y_axis_max, div_id) => {
     _d.plots = _d.plots || {};
 	console.log("inside the make scatterplot");
-	console.log(df);
+	//console.log(df);
     let y_scale;
     let y_ticks = [];
     if (y_axis_max < 20) { y_axis_max = 20; }
@@ -177,7 +179,7 @@ const make_scatter_plot = (df, title, color_by_category, y_axis_max, div_id) => 
         oddsratio: df.comparisons['continuous'].or,
     };
     console.log("logp value");
-    console.log(scatter_data);
+    //console.log(scatter_data);
     _d.plots[div_id] = {scatter_data: scatter_data};
 
     const width = Math.max(400, $(`#${div_id}`).width()*0.95);
@@ -358,3 +360,8 @@ const add_weights_button = (weights_fname, label) => {
     const $str = $(str);
     $('#weights').append($str);
 };
+
+
+window.handle_data = handle_data;
+
+// handle_data(window.jsvars.prs_json);

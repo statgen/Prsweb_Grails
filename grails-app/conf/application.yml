@@ -83,6 +83,8 @@ grails:
             enabled: true,
             processor: 'webpack'
             processJsFiles: false
+            nodeExec: "/usr/local/bin/node"
+
 endpoints:
     jmx:
         unique-names: true

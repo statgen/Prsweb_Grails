@@ -408,9 +408,11 @@
 
 	window.handle_data = handle_data;
 
-	/*handle_data(window.jsvars.prs_json);
 
-	handle_data('url/');
-*/
+
+	handle_data(window.jsvars.prs_json);
+
+	handle_data(window.jsvars.prs_json);
+
 /***/ })
 /******/ ]);
