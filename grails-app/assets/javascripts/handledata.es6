@@ -30,8 +30,8 @@ LocusZoom.TransformationFunctions.set('2sigfigs', (x) => x.toPrecision(2));
 
 
 const handle_data = data => {
-    console.log("inside handle data");
-    console.log(data);
+    //console.log("inside handle data");
+    //console.log(data);
     document_ready().then(() => {
         _d.data = data;
         data.PRS_code_string = data.PRS_code_strings[data.PRS_code];
@@ -39,7 +39,7 @@ const handle_data = data => {
         make_drilldown(data);
         make_plots(data);
         if (data.weights37_fname) { add_weights_button(data.weights37_fname, 'GRCh37'); }
-        if (data.weights38_fname) { add_weights_button(data.weights38_fname, 'GRCh38'); }
+
     });
 }
 
@@ -101,7 +101,7 @@ const make_plots = data => {
 
 const make_scatter_plot = (df, title, color_by_category, y_axis_max, div_id) => {
     _d.plots = _d.plots || {};
-	console.log("inside the make scatterplot");
+	//console.log("inside the make scatterplot");
 	//console.log(df);
     let y_scale;
     let y_ticks = [];
@@ -178,7 +178,7 @@ const make_scatter_plot = (df, title, color_by_category, y_axis_max, div_id) => 
         ci2:       df.comparisons['continuous'].ci2.map(x => x.toPrecision(3)),
         oddsratio: df.comparisons['continuous'].or,
     };
-    console.log("logp value");
+    //console.log("logp value");
     //console.log(scatter_data);
     _d.plots[div_id] = {scatter_data: scatter_data};
 

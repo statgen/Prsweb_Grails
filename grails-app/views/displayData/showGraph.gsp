@@ -19,6 +19,9 @@
         <babel:webpack src="handledata.es6" />
         <asset:stylesheet src ="datatables.css" />
         <asset:javascript src="datatables.js" />
+        <STYLE>
+        div.drilldown { display: inline-block; }
+        </STYLE>
 
 
 
@@ -37,9 +40,11 @@
                 handle_data(${raw(dataRes)});
 
                 $('#example').DataTable({
+                    destroy: true,
                     "order": [[ 2, "asc" ]]
                 });
                 $('#exclusion').DataTable({
+                    destroy: true,
                     "order": [[ 2, "asc" ]]
                 });
 
@@ -71,7 +76,59 @@
                 <div class="message" role="status">${flash.message}</div>
             </g:if>
 
+            <g:set var="dataRes" value="${(grails.converters.JSON.parse(dataRes))}" />
+
+
+
+
+%{--                        <g:link  action="main" params="${[inputprscode:dataRes.PRS_code, inprsstudy:dataRes.PRS_study]}"><span class="glyphicon glyphicon-th-list"></span> Go Back</g:link>--}%
+
+
+
+
+
+
+                </div>
+                </div>
+            </div>
+
+
             <div class="container-fluid">
+                <div class="row">
+
+                        <table class="infotable">
+                            <tr><td colspan="2"><span class="contentTitle"> PRS for ${dispObj.descdata} from ${dispObj.phenomes} </span> </td></tr>
+                            <tr><td>PRSweb LD reference : ${dispObj.genld}</td><td>GWAS source : ${dispObj.source}</td><td>PRS method : ${dispObj.method}</td></tr>
+                            <tr>
+
+                                <g:if test="${dispObj.refdata.equals('UKB_GWAS') && dispObj.source.equals('PheWAS_Codes')}">
+
+                                    <td> GWAS reference : <a href ="https://www.ncbi.nlm.nih.gov/pubmed/?term=30107761" target="_blank"> ${dispObj.refdata}</a></td>
+                                </g:if>
+                                <g:elseif test="${dispObj.refdata.equals('UKB_GWAS') && !(dispObj.source.equals('PheWAS_Codes'))}">
+
+                                    <td> GWAS reference : <a href="https://github.com/Nealelab/UK_Biobank_GWAS" target="_blank">!${dispObj.refdata}</a> </td>
+                                </g:elseif>
+                                <g:elseif test="${!(dispObj.refdata.equals('UKB_GWAS'))}">
+
+                                    <td> GWAS reference : <a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=${dispObj.refdata.replace(';',',')}" target="_blank">${dispObj.refdata}" </a></td>
+                                </g:elseif>
+
+
+
+
+
+
+                                <td>GWAS phenotype :${dispObj.descdata}</td><td>PRSweb date : ${dispObj.datecreated}</td></tr>
+                            <tr><td>GWAS ID : ${dispObj.prefixdata}  </td> <td>GWAS URL : <a href="${dispObj.urldata}" target="_blank">${dispObj.urldata}</a> </td><td>Genome build	: GRCh37/hg19 </td></tr>
+                            <tr><td>PRS tuning parameter : ${dispObj.tunparam} </td><td>PRS evaluation in : ${dispObj.phenomes}</td></tr>
+
+
+                        </table>
+                    </div>
+                </div>
+
+
 
                 <div class="row"><div class="col-12"><div id="phewas">Loading...</div></div></div>
                 <div class="row">
@@ -83,13 +140,13 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <g:set var="dataRes" value="${(grails.converters.JSON.parse(dataRes))}" />
 
-                                <export:formats formats="['csv', 'excel']" params="${[phecode:dataRes.PRS_code, model:dataRes.PRS_source, phenome:dataRes.PRS_study]}"  />
+
+
                                 <nav>
                                     <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Phewas df</a>
-                                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Exclusion</a>
+                                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">PRS PheWAS Summary Statistics</a>
+                                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Exclusion PRS PheWAS Summary Statistics</a>
                                     </div>
                                 </nav>
 
@@ -109,19 +166,21 @@
 
                                                     <thead>
                                                     <tr>
-                                                        <th>PRS String</th>
+                                                        <th>PheWAS Code</th>
+                                                        <th>PheWAS Code Description</th>
                                                         <th>Category</th>
                                                         <th>P value</th>
                                                         <th>BETA</th>
                                                         <th>SEBETA</th>
-                                                        <th>N Cases</th>
-                                                        <th>Num Controls</th>
+                                                        <th># Cases</th>
+                                                        <th># Controls</th>
                                                         <th>Sex</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody id="insertfirsttable">
                                                     <g:each var="prop" in="${prsobjlist}" index="i">
                                                         <tr>
+                                                            <td>${prop.getCode()}</td>
                                                             <td>${prop.getPstring()}</td>
                                                             <td>${prop.getCategory()}</td>
                                                             <td>${prop.getPrsp()}</td>
@@ -141,19 +200,21 @@
 
                                             <thead>
                                             <tr>
-                                                <th>PRS String</th>
+                                                <th>PheWAS Code</th>
+                                                <th>PheWAS Code Description</th>
                                                 <th>Category</th>
                                                 <th>P value</th>
                                                 <th>BETA</th>
                                                 <th>SEBETA</th>
-                                                <th>N Cases</th>
-                                                <th>Num Controls</th>
+                                                <th># Cases</th>
+                                                <th># Controls</th>
                                                 <th>Sex</th>
                                             </tr>
                                             </thead>
                                             <tbody id="insertfirsttable1">
                                             <g:each var="prop" in="${prsexobjlist}" index="i">
                                                 <tr>
+                                                    <td>${prop.getCode()}</td>
                                                     <td>${prop.getPstring()}</td>
                                                     <td>${prop.getCategory()}</td>
                                                     <td>${prop.getPrsp()}</td>
@@ -177,7 +238,17 @@
 
 
                 </div>
-                <div class="row"><div class="col-12"><div id="weights"></div></div></div>
+                <div class="row">
+
+
+                    <div><span class="mx-1"><a  class="btn btn-primary" href="${createLink(action:'downloadFile')}?filename=${dispObj.prswebprefix}&type=weight">Download weights of GRCh37</a></span></div>
+                    <div><span class="mx-1"><a class="btn btn-primary"  href="${createLink(action:'downloadFile')}?filename=${dispObj.prswebprefix}&type=df">Download PRS Phewas</a></span></div>
+                    <div><span class="mx-1"><a class="btn btn-primary" href="${createLink(action:'downloadFile')}?filename=${dispObj.prswebprefix}&type=excl">Download PRS Phewas Exclusion</a></span></div>
+
+
+
+
+                </div>
                 <div class="row my-2"><div class="col-12">
                     <div class="card"><div class="card-body">
                         <h3>LEGENDS</h3>
@@ -197,16 +268,12 @@
 
 
                 <div class="row my-2"><div class="col-12">
-                    <div class="card"><div class="card-body">
+                    <div class="card">
+                        <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-md-10">
-                            <asset:image class="rounded mx-auto d-block" style="width:100%; max-width:11em; height:auto" src="umich-logo.png" alt="University of Michigan logo"/>
-                            <p>University of Michigan Center for Precision Health Data Science</p>
-                        <h3>CONTACT</h3>
-                        <p>Site created by Peter VandeHaar, last updated on {{ today }}.</p>
-                        <p>Contributors: Lars Fritsche, Lauren J Beesley, and Bhramar Mukherjee</p>
-                        <p class="mb-0">Contact: Bhramar Mukherjee (bhramar@umich.edu) and Lars Fritsche (larsf@umich.edu), 1415 Washington Heights, Ann Arbor MI, 48109</p>
-                    </div></div>
+                             <p>University of Michigan Center for Precision Health Data Science</p>
+                         </div></div>
                 </div></div>
             </div>
 
@@ -216,5 +283,7 @@
 
 
         </div>
-    </body>
+            </div>
+            </div>
+            </div>
 </html>

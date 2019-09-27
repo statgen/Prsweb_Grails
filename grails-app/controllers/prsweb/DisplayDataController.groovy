@@ -17,6 +17,7 @@ import org.grails.web.json.JSONObject
 
 import prsweb.sortPrsObject
 import prsweb.FileParserObject
+import prsweb.getweightFileHeader
 
 import java.text.DecimalFormat
 import java.util.regex.Matcher
@@ -38,6 +39,7 @@ class DisplayDataController {
     {
 
         println("params from main $params")
+        Gson gson = new Gson();
 
 
        /* def dir = new File("/Users/snehalpatil/Documents/GithubProjects/PRSweb-master/data/phewas")
@@ -148,7 +150,10 @@ THis part will be needed for the tree view
        ArrayList uniquedescPhecode = new ArrayList()
         //LinkedHashMap<String, Object> jsonBuilder = new HashMap<>()
 
-        for(int i = 0 ; i < phenocat.size(); i++) {
+
+        //Get the json in the format for each phenotype category : collect the phecode and information
+
+    /*    for(int i = 0 ; i < phenocat.size(); i++) {
 
 
             LinkedHashMap<String, Object> phenocatmap = new HashMap<>()
@@ -177,11 +182,20 @@ THis part will be needed for the tree view
             uniquedescPhecode.add(phenocatmap)
 
         }
+*/
+        def pheidunique = DisplayData.findAllWhere(phecat: 2).phecodedata.unique().collect{it.replace("X",'')}.toList()
+        def c = Phecode.createCriteria()
+        def phecodeuniquedata = c.list {
+            'in'("phecodeid", pheidunique)
+            order("phecodeid", "asc")
 
+        }
+
+        //println(phecodeuniquedata)
 
 
         //THis is for second view where user will be able to the values from the table view
-
+        def formatter = new DecimalFormat("0.##E0");
 
         for(int i = 0 ; i < phenocat.size(); i++)
         {
@@ -196,11 +210,14 @@ THis part will be needed for the tree view
 
 
             //println(phecode.find {phecodeid:'171.1'}.phecodedesc)
+//formatter.format
+
+
 
             def res =disobj.collect{
                 en ->
-                    return [phecode:en.phecodedata, phenome:en.phenomes,model:en.sourcedata, desc:en.descdata, snp:en.nsnp, r2nag:en.r2_nage, brier: en.brierScore, auc:en.auc, aucci:en.aucci, hom_chi:en.hosm_chi, hom_p:en.hosm_p,prsweb:en.prsweb,mgip:en.mgip,mgior:en.mgior,mgiorci:en.mgiorci,ukbp:en.ukbp,ukbor:en.ukbor,ukborci:en.ukborci]
-
+                    return [refdata: en.refdata, urldata:en.urldata,pid:en.id,phecode:en.phecodedata, phenome:en.phenomes,prefixdata:en.prefixdata,prswebprefix:en.prswebprefix,model:en.outsource, desc:en.descdata, snp:en.nsnp, r2nag:en.r2_nage, brier: en.brierScore, auc:en.auc, aucci:en.aucci, hom_chi:en.hosm_chi, hom_p:en.hosm_p,prsweb:en.prsweb,pval:en.pval,logp:en.logpval,orval:en.orval,orcival:en.orcival,prsmethod:en.method,nomsig:en.nomsig,warreveff :en.warreveff,perunpow:en.perunpow,quaanal:en.quaanal,
+                            genld :en.genld,srcdata:en.source,datecreated:en.datecreated,topor:en.topor,topci1: en.toporci1,topci2:en.toporci2,tunp:en.tunparam,genob:en.genomebuild, topor2:en.topor2,topci12:en.toporci12,topci22:en.toporci22,topor5:en.topor5,topci15:en.toporci15,topci25:en.toporci25]
             }
 
             phenamemap.put("phecodeObj", res)
@@ -209,10 +226,10 @@ THis part will be needed for the tree view
 
             jsonBuilder.add(phenamemap)
 
-          // println(res)
+           //println(res)
         }
 
-        Gson gson = new Gson();
+
 
 
 
@@ -224,13 +241,193 @@ THis part will be needed for the tree view
 
 
         //uniqPhecodesDesc.
-       // println(uniquedescPhecode.findAll{ it.phenocatname.equals("Neoplasms")}.phecodetest)
+        //println(uniquedescPhecode.findAll{ it.phenocatname.equals("Neoplasms")}.phecodetest)
+
+        //println(resultJson)
+
+        def drilldown = DisplayData.getAll()
 
 
 
 
-        [drilldown:DisplayData.getAll(),resultJson:resultJson,phenocat:phenocat,uniqPhecodesDesc:uniqPhecodesDesc,jsonBuilder:jsonBuilder]
+        //[drilldown:DisplayData.getAll(),resultJson:resultJson,phenocat:phenocat,uniqPhecodesDesc:uniqPhecodesDesc,jsonBuilder:jsonBuilder]
 
+        [drilldown:DisplayData.getAll(),resultJson:resultJson,phecodeuniquedata:phecodeuniquedata,inputprscode:params.inputprscode,inprsstudy:params.inprsstudy]
+
+    }
+
+    def getWtFileInfo()
+    {
+
+        println(params)
+        String [] tokens = params.val1.toString().split(":")
+
+        def fname  = tokens[1]
+        def lno  = tokens[0]
+        def datadirpath
+        if (Environment.current == Environment.DEVELOPMENT) {
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version2/PRSweb_Update_20190801/data/'
+        } else
+        if (Environment.current == Environment.TEST) {
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
+        } else
+        if (Environment.current == Environment.PRODUCTION) {
+            datadirpath = '/var/lib/tomcat8/webapps/data/'
+        }
+        def filepath =datadirpath+fname+"_WEIGHTS.txt"
+        def file = new File(filepath)
+
+        println(file.exists())
+
+        BufferedReader br = new BufferedReader(new FileReader(filepath))
+        String line
+
+        String infof  = lno+":"
+
+        while ((line = br.readLine()) != null) {
+
+
+
+            if(line.contains("##"))
+            {
+               // println(line)
+                infof = infof + line.replace("##" ,"") + "\n" ;
+            }
+
+
+
+        }
+
+
+
+        println(infof.split(":")[0])
+
+        println(infof)
+
+
+        render infof
+
+
+    }
+
+    def getTableData()
+    {
+
+        println(params)
+        def prswt = "X"+params.prswt
+        def phenomes = params.phenome
+
+        // select * from display_data where phecodedata = "X172.2" and phenomes="MGI";
+        def c = DisplayData.createCriteria()
+        def displaydatatable = c.list {
+            'in'("phecodedata", prswt)
+            order("phenomes", "phenomes")
+
+        }
+
+
+
+        def res =displaydatatable.collect{
+            en ->
+                return [pid:en.id,phecode:en.phecodedata,wtfiletext: new getweightFileHeader().readWtFile(en.prswebprefix), phenome:en.phenomes,prswebprefix:en.prswebprefix,model:en.outsource, desc:en.descdata, snp:en.nsnp, r2nag:en.r2_nage, brier: en.brierScore, auc:en.auc, aucci:en.aucci, hom_chi:en.hosm_chi, hom_p:en.hosm_p,prsweb:en.prsweb,pval:en.pval,orval:en.orval,orcival:en.orcival,prsmethod:en.method,nomsig:en.nomsig,warreveff :en.warreveff,perunpow:en.perunpow,quaanal:en.quaanal]
+        }
+
+        //println(res)
+
+        def tbodyup = ''
+
+        for(int i = 0; i < res.size(); i++)
+        {
+            println(res.get(i).phecode)
+        }
+
+
+
+
+       for(int i = 0; i < res.size(); i++)
+        {
+
+            def filepathlink = '${createLink(action:\'downloadFile\')}?filename='+ res.get(i).prswebprefix;
+
+            def filelinkpage ='<a class="intro" href="'+filepathlink +'">link</a>';
+
+
+
+
+            def popuplink = '<span onclick="displayInfo(\''+res.get(i).prswebprefix+'\')"> <i class="fa fa-info-circle"></i> </span>';
+
+
+
+
+            def str =   '<tr>'
+            +'<td>'+res.get(i).model+'</td>'
+            +'<td>'+res(i).model+'</td>'
+            +'<td>'+res(i).desc+'</td>'
+            +'<td>'+res(i).snp+'</td>'
+            +'<td>'+res(i).r2nag+'</td>'
+            +'<td>'+res(i).brier+'</td>'
+            +'<td>'+res(i).auc+'</td>'
+            +'<td>'+res(i).aucci+'</td>'
+            +'<td>'+res(i).hom_p+'</td>'
+            +'<td>'+res(i).hom_chi+'</td>'
+            +'<td>'+res(i).prsmethod+'</td>'
+            +'<td>'+res(i).orval+'</td>'
+
+            +'<td>'+res(i).pval+'</td>'
+
+            +'<td>'+res(i).orci+'</td>'
+           // +'<td>'+linkpage+'</td>'
+            +'<td data-toggle="popover" data-trigger="hover" title=" test"  data-content="'+res.get(i).wtfiletext +'">' +  filelinkpage+ '</td>'
+
+
+            +'</tr>';
+
+            tbodyup = tbodyup+str;
+
+
+
+        }
+
+        //println(tbodyup)
+
+                    render tbodyup
+
+
+    }
+
+    def downloadFile ()
+    {
+println(params)
+        def fname  = params.filename
+        def datadirpath
+        if (Environment.current == Environment.DEVELOPMENT) {
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version4/PRSweb_Update_20190801/data/'
+        } else
+        if (Environment.current == Environment.TEST) {
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
+        } else
+        if (Environment.current == Environment.PRODUCTION) {
+            datadirpath = '/var/lib/tomcat8/webapps/data/'
+        }
+
+        def filepath
+        if(params.type.equals("weight")) {
+            filepath  = datadirpath + fname + "_WEIGHTS.txt"
+        }
+        else if(params.type.equals("df")) {
+             filepath = datadirpath + fname + "_PRS_PHEWAS.txt"
+        }
+        else if(params.type.equals("excl")) {
+             filepath = datadirpath + fname + "_EXCLUSION_PRS_PHEWAS.txt"
+        }
+
+        def file = new File(filepath)
+
+        def dfname = fname+"_WEIGHTS.txt"
+
+        println(file.getName())
+
+        render file: new File (filepath), fileName: dfname,contentType: 'text/rtf'
     }
 
     def index()
@@ -242,8 +439,518 @@ THis part will be needed for the tree view
     {
 
     }
-
+//for version 20190801
     def showGraph() {
+
+        def timeStart = new Date()
+
+        def doneexobj
+        def dbphecode
+        LinkedHashMap<String, Object> datajson = new HashMap<>()
+        Gson gson = new Gson()
+        DecimalFormat df = new DecimalFormat("#.###")
+        def list = []
+        LinkedHashMap<String, Object> colcatmapr = new HashMap<>()
+
+
+        println("params are $params")
+        def inputprscode = params.phecode
+        def inprscat = params.model.toString().toUpperCase()//source data eg. fingen
+        def inprsstudy = params.phenome.toString()//eg MGI o UKB
+        def inputid = params.id
+
+
+        def dispObj = DisplayData.findById(inputid.toLong())
+
+        def filepath = dispObj.prswebprefix
+        println(filepath);
+
+        def datadirpath = ''
+        if (Environment.current == Environment.DEVELOPMENT) {
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version5/PRSweb_Update_20190801/data/'
+        } else
+        if (Environment.current == Environment.TEST) {
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version3/PRSweb_Update_20190801/data/'
+        } else
+        if (Environment.current == Environment.PRODUCTION) {
+            datadirpath = '/var/lib/tomcat8/webapps/data/'
+        }
+
+
+        //def
+        def dir = new File(datadirpath+"phewas")
+
+
+        datajson.put("PRS_code",inputprscode)
+        datajson.put("PRS_source",inprscat)
+        datajson.put("PRS_study",inprsstudy)
+
+
+
+        def weights_out_fname_37 =datadirpath +filepath+"_WEIGHTS.txt"
+        //def weights_out_fname_38 =datadirpath +"weights-GRCH37/"+inputprscode+"_"+inprscat+"__GRCH38_Weights.txt"
+
+        def weights37 =new File(weights_out_fname_37)
+        if(!weights37.exists())
+        {
+            weights_out_fname_37 ='None'
+            //println("37 weights doesnt exists")
+
+        }
+
+
+        datajson.put("weights37_fname",weights_out_fname_37)
+
+//If the phecode hax extension then to get a;ll the entries for eg. to catct all the 172.1 172.2 172.22
+        if(inputprscode.toString().contains("."))
+        {
+
+            dbphecode = '%'+inputprscode.toString().substring(0,inputprscode.toString().indexOf("."))+'%'
+        }
+        else
+        {
+            dbphecode = '%'+inputprscode.toString()
+        }
+
+
+        def phenocatObj = Phenotypecat.getAll()
+
+        //println("input dbphecode is $dbphecode")
+        def displayObjselect = DisplayData.findAllByPhecodedataLike(dbphecode)
+
+
+        LinkedHashMap<String, Object> pr = new HashMap<>()
+        Set<String> uniquecode = new HashSet<String>(displayObjselect.phecodedata);
+        LinkedHashMap<String, Object> codemap = new HashMap<>()
+
+
+        uniquecode.each{
+            def loopphecodedata = it
+            def sourceSpeObje= displayObjselect.findAll { it.phecodedata.equals(loopphecodedata)}
+            Set<String> uniquesrc = new HashSet<String>(sourceSpeObje.descdata);
+            //println("uniqye source for this phecodedata is $uniquesrc")
+            LinkedHashMap<String, Object> descmap = new HashMap<>()
+            uniquesrc.each {
+                def loopsrcdata = it
+                def srcdata = sourceSpeObje.findAll{ it.descdata.equals(loopsrcdata)}
+                def list2= []
+                srcdata.each {
+                    def desc = it.descdata
+                    def studies = it.phenomes
+                    list2 << ['info': desc, 'studies':studies]
+                }
+                descmap.put(loopsrcdata,list2)
+            }
+
+            codemap.put(loopphecodedata,descmap)
+
+
+        }
+
+        //THis code is to get PRS_code_strings
+        LinkedHashMap<String, Object> prsstringmap = new HashMap<>()
+        uniquecode.each {prsstringmap.put(it.replace("X",""),Phecode.findByPhecodeid(it.replace("X","")).phecodedesc)}
+        datajson.put("PRS_code_strings",prsstringmap)
+        println("uniquecode $prsstringmap")
+
+        //This code is to get color by category
+        phenocatObj.each {colcatmapr.put(it.phename,it.color)}
+        datajson.put("color_by_category",colcatmapr)
+
+        //println(displayObjselect)
+        datajson.put("drilldown",uniquecode)
+        LinkedHashMap<String, Object> phewas_df = new HashMap<>()
+        def donejson=''
+
+
+
+
+
+        //println(gson.toJson(drilldown))*/
+
+//parse file name and check which matches the criteria..The file which matches the criteria will be added to the String phewasdf_json string and displayed to the user
+
+
+
+        //this is for phewas_df
+        //*****************************************************************************************************************************************
+        //find the file required based on the user selection
+        //read column names and get the order
+        //parse the file and create list of object
+        //sort the object first using groupnum and then phewas_code
+        //create the list of individual columns and create hashmap
+
+        def fname=''
+        def foundfname =''
+        String phewasdf_json= ''
+        ArrayList<FileParserObject> prsobjlist = new ArrayList<FileParserObject>()
+
+        def timeinmiddle = new Date()
+        TimeDuration duration = TimeCategory.minus(timeinmiddle, timeStart)
+        println("Before startign to read the file $duration")
+
+
+                def phewasdffile = datadirpath+filepath+"_PRS_PHEWAS.txt"
+
+                def phewas_df_file=new File(phewasdffile)
+
+                def exfilepath = datadirpath+filepath+"_EXCLUSION_PRS_PHEWAS.txt"
+
+
+        if(phewas_df_file.exists()) {
+
+                    BufferedReader br = new BufferedReader(new FileReader(phewasdffile))
+                    String line
+                    println("Phewas file exists")
+                    println(phewas_df_file.getName())
+
+                    //Parse the header to get the position of the column names so they are used to parse the data:
+                    String header = br.readLine()
+                    String[] colname = header.split("\t")
+                    HashMap<String, Integer> colorder = new HashMap<>()
+                    // as the column is not fixed , try to find the index based on the name of the column
+
+                    for (int k = 0; k < colname.size(); k++) {
+                        colorder.put(colname[k], k)
+                    }
+
+                    def timereadingfilestart = new Date()
+                    TimeDuration duration1 = TimeCategory.minus(timereadingfilestart, timeinmiddle)
+                    println("after got the name of the file $duration1")
+                    while ((line = br.readLine()) != null) {
+                        String[] tokens = line.split("\t")
+
+                        String code = tokens[colorder.get("phewas_code")]
+                        String pstring = tokens[colorder.get("phewas_string")]
+                        String category = tokens[colorder.get("group")]
+                        String grpnum = tokens[colorder.get("groupnum")]
+                        int numcases = Integer.parseInt(tokens[colorder.get("MatchedCases")])
+                        //column used MatchedControls
+                        int numcont = Integer.parseInt(tokens[colorder.get("MatchedControls")])
+                        String sex = tokens[colorder.get("sex")]
+
+                        //println(tokens[28].getClass())
+                        Double q1q2ci1 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q2_CI1")])).toDouble()
+                        Double q1q2ci2 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q2_CI2")])).toDouble()
+                        Double q1q2or = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q2_OR")])).toDouble()
+
+                        Double q1q3ci1 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q3_CI1")])).toDouble()
+                        Double q1q3ci2 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q3_CI2")])).toDouble()
+                        Double q1q3or = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q3_OR")])).toDouble()
+
+                        Double q1q4ci1 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q4_CI1")])).toDouble()
+                        Double q1q4ci2 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q4_CI2")])).toDouble()
+                        Double q1q4or = String.format("%.3f", Double.parseDouble(tokens[colorder.get("Q1Q4_OR")])).toDouble()
+
+                        Double cbeta = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_BETA")])).toDouble()
+                        Double cci1 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_CI1")])).toDouble()
+                        Double cci2 = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_CI2")])).toDouble()
+                        //Double lcogp = String.format("%.3f", sortPrsObject.str2neglog10(Double.parseDouble(tokens[colorder.get("PRS_LOGP")]))).toDouble()
+                        Double lcogp = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_log10P")])).toDouble()
+                        Double prsp = Double.parseDouble(tokens[colorder.get("PRS_P")])
+                        Double cor = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_OR")])).toDouble()
+                        Double csebata = String.format("%.3f", Double.parseDouble(tokens[colorder.get("PRS_SEBETA")])).toDouble()
+
+                        FileParserObject tempfpo = new FileParserObject(code, pstring, category, grpnum, numcases, numcont, sex, q1q2ci1, q1q2ci2, q1q2or, q1q3ci1, q1q3ci2, q1q3or, q1q4ci1, q1q4ci2, q1q4or, cbeta, cci1, cci2, lcogp, prsp, cor, csebata)
+                        prsobjlist.add(tempfpo)
+
+                    }
+
+                    br.close()
+
+                    // println(prsobjlist.code)
+                    //Sort the list by grp name and then by code so they all stay together
+                    Collections.sort(prsobjlist, new Comparator<FileParserObject>() {
+                        @Override
+                        public int compare(FileParserObject u1, FileParserObject u2) {
+
+
+                            int x3 = Integer.parseInt(u1.getGrpnum());
+                            int x4 = Integer.parseInt(u2.getGrpnum());
+                            int sComp = x3.compareTo(x4)
+                            if (sComp != 0) {
+                                return sComp
+                            } else {
+                                Double x1 = Double.parseDouble(u1.getCode());
+                                Double x2 = Double.parseDouble(u2.getCode());
+                                return x1.compareTo(x2)
+                            }
+                            // return u1.getCategory().compareTo(u2.getCategory());
+                        }
+                    });
+
+                    def timereadingfiledone1 = new Date()
+            println(timereadingfiledone1)
+                    TimeDuration duration2 = TimeCategory.minus(timereadingfiledone1, timereadingfilestart)
+                    println("done reading and sorted object $duration2")
+
+                    ArrayList<String> categorylist = new ArrayList<String>()
+                    ArrayList<String> codelist = new ArrayList<String>()
+                    ArrayList<String> complist = new ArrayList<String>()
+                    ArrayList<String> numcaselist = new ArrayList<String>()
+                    ArrayList<String> numconlist = new ArrayList<String>()
+                    ArrayList<String> sexlist = new ArrayList<String>()
+                    ArrayList<String> pbsstringlist = new ArrayList<String>()
+
+
+                    LinkedHashMap<String, Object> q1q2 = new HashMap<>()
+                    LinkedHashMap<String, Object> q1q3 = new HashMap<>()
+                    LinkedHashMap<String, Object> q1q4 = new HashMap<>()
+                    LinkedHashMap<String, Object> contlist = new HashMap<>()
+                    LinkedHashMap<String, Object> comparisons = new HashMap<>()
+
+                    q1q2.put("ci1", prsobjlist.q1q2ci1)
+                    q1q2.put("ci2", prsobjlist.q1q2ci2)
+                    q1q2.put("or", prsobjlist.q1q2or)
+                    comparisons.put("Q1Q2", q1q2)
+
+                    q1q3.put("ci1", prsobjlist.q1q3ci1)
+                    q1q3.put("ci2", prsobjlist.q1q3ci2)
+                    q1q3.put("or", prsobjlist.q1q3or)
+                    comparisons.put("Q1Q3", q1q3)
+
+                    q1q4.put("ci1", prsobjlist.q1q4ci1)
+                    q1q4.put("ci2", prsobjlist.q1q4ci2)
+                    q1q4.put("or", prsobjlist.q1q4or)
+                    comparisons.put("Q1Q4", q1q4)
+
+
+                    contlist.put("beta", prsobjlist.cbeta)
+                    contlist.put("ci1", prsobjlist.cci1)
+                    contlist.put("ci2", prsobjlist.cci2)
+                    contlist.put("logp", prsobjlist.lcogp)
+                    contlist.put("or", prsobjlist.cor)
+                    contlist.put("sebeta", prsobjlist.csebata)
+                    comparisons.put("continuous", contlist)
+
+
+                    categorylist = prsobjlist.category
+                    codelist = prsobjlist.code
+                    numcaselist = prsobjlist.numcases
+                    numconlist = prsobjlist.numcont
+                    sexlist = prsobjlist.sex
+                    pbsstringlist = prsobjlist.pstring
+
+                    phewas_df.put("category", categorylist)
+                    phewas_df.put("code", codelist)
+                    phewas_df.put("comparisons", comparisons)
+                    phewas_df.put("num_cases", numcaselist)
+                    phewas_df.put("num_controls", numconlist)
+                    phewas_df.put("sex", sexlist)
+                    phewas_df.put("string", pbsstringlist)
+
+                    phewasdf_json = gson.toJson(phewas_df);
+
+            donejson = new Date()
+            TimeDuration djason = TimeCategory.minus(donejson, timereadingfiledone1)
+            println(" required to create the phewas df json $djason")
+
+
+        }
+
+
+
+
+        //this is for phewas_df_excluded
+        //*****************************************************************************************************************************************
+
+
+
+        String phewasexdf_json= ''
+        println(exfilepath)
+        def phewas_ex_df_file=new File(exfilepath)
+
+        LinkedHashMap<String, Object> phewas_ex_df = new HashMap<>()
+        ArrayList<FileParserObject> prsexobjlist = new ArrayList<FileParserObject>()
+        if(phewas_ex_df_file.exists())
+        {
+            println("exclusion file exists")
+            BufferedReader brex = new BufferedReader(new FileReader(phewas_ex_df_file))
+            String line2
+            //Parse the header to get the position of the column names so they are used to parse the data:
+            String headerex= brex.readLine()
+            String [] colnameex = headerex.split("\t")
+            HashMap<String, Integer> colorderex = new HashMap<>()
+            for(int j=0; j < colnameex.size(); j++)
+            {
+                colorderex.put(colnameex[j],j)
+            }
+            while ((line2 = brex.readLine()) != null) {
+                String[] tokens = line2.split("\t")
+                String code = tokens[colorderex.get("phewas_code")]
+                String pstring = tokens[colorderex.get("phewas_string")]
+                String category = tokens[colorderex.get("group")]
+                String grpnum = tokens[colorderex.get("groupnum")]
+                int numcases = Integer.parseInt(tokens[colorderex.get("MatchedCases")])
+                //column used MatchedControls
+                int numcont = Integer.parseInt(tokens[colorderex.get("MatchedControls")])
+                String sex = tokens[colorderex.get("sex")]
+
+                //println(tokens[28].getClass())
+                Double q1q2ci1 = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q2_CI1")])).toDouble()
+                Double q1q2ci2 = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q2_CI2")])).toDouble()
+                Double q1q2or = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q2_OR")])).toDouble()
+
+                Double q1q3ci1 = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q3_CI1")])).toDouble()
+                Double q1q3ci2 = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q3_CI2")])).toDouble()
+                Double q1q3or = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q3_OR")])).toDouble()
+
+                Double q1q4ci1 = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q4_CI1")])).toDouble()
+                Double q1q4ci2 = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q4_CI2")])).toDouble()
+                Double q1q4or = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("Q1Q4_OR")])).toDouble()
+
+                Double cbeta = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("PRS_BETA")])).toDouble()
+                Double cci1 = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("PRS_CI1")])).toDouble()
+                Double cci2 = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("PRS_CI2")])).toDouble()
+                //Double lcogp = String.format("%.3f", sortPrsObject.str2neglog10(Double.parseDouble(tokens[colorder.get("PRS_LOGP")]))).toDouble()
+                Double lcogp = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("PRS_log10P")])).toDouble()
+                Double prsp =  Double.parseDouble(tokens[colorderex.get("PRS_P")]).toBigDecimal()
+                Double cor = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("PRS_OR")])).toDouble()
+                Double csebata = String.format("%.3f", Double.parseDouble(tokens[colorderex.get("PRS_SEBETA")])).toDouble()
+
+
+
+                FileParserObject tempfpo = new FileParserObject(code, pstring, category, grpnum, numcases, numcont, sex, q1q2ci1, q1q2ci2, q1q2or, q1q3ci1, q1q3ci2, q1q3or, q1q4ci1, q1q4ci2, q1q4or, cbeta, cci1, cci2, lcogp,prsp, cor, csebata)
+                prsexobjlist.add(tempfpo)
+
+            }
+
+            brex.close()
+
+            // println(prsobjlist.code)
+            //Sort the list by grp name and then by code so they all stay together
+            Collections.sort(prsexobjlist, new Comparator<FileParserObject>() {
+                @Override
+                public int compare(FileParserObject u1, FileParserObject u2) {
+
+
+                    int x3 = Integer.parseInt(u1.getGrpnum());
+                    int x4 = Integer.parseInt(u2.getGrpnum());
+                    int sComp = x3.compareTo(x4)
+                    if (sComp != 0) {
+                        return sComp
+                    } else {
+                        Double x1 = Double.parseDouble(u1.getCode());
+                        Double x2 = Double.parseDouble(u2.getCode());
+                        return x1.compareTo(x2)
+                    }
+                    // return u1.getCategory().compareTo(u2.getCategory());
+                }
+            });
+
+
+
+            doneexobj = new Date()
+            TimeDuration exobjtime = TimeCategory.minus(doneexobj, donejson)
+            println("done creating phewas ex df object and sortef $exobjtime")
+
+            // println(prsobjlist.code)
+            //println(prsobjlist.category)
+
+            ArrayList<String> categorylistex = new ArrayList<String>()
+            ArrayList<String> codelistex = new ArrayList<String>()
+            ArrayList<String> complistex = new ArrayList<String>()
+            ArrayList<String> numcaselistex = new ArrayList<String>()
+            ArrayList<String> numconlistex = new ArrayList<String>()
+            ArrayList<String> sexlistex = new ArrayList<String>()
+            ArrayList<String> pbsstringlistex = new ArrayList<String>()
+
+
+            LinkedHashMap<String, Object> q1q2ex = new HashMap<>()
+            LinkedHashMap<String, Object> q1q3ex = new HashMap<>()
+            LinkedHashMap<String, Object> q1q4ex = new HashMap<>()
+            LinkedHashMap<String, Object> contlistex = new HashMap<>()
+            LinkedHashMap<String, Object> comparisonsex = new HashMap<>()
+
+            q1q2ex.put("ci1", prsexobjlist.q1q2ci1)
+            q1q2ex.put("ci2", prsexobjlist.q1q2ci2)
+            q1q2ex.put("or", prsexobjlist.q1q2or)
+            comparisonsex.put("Q1Q2", q1q2ex)
+
+            q1q3ex.put("ci1", prsexobjlist.q1q3ci1)
+            q1q3ex.put("ci2", prsexobjlist.q1q3ci2)
+            q1q3ex.put("or", prsexobjlist.q1q3or)
+            comparisonsex.put("Q1Q3", q1q3ex)
+
+            q1q4ex.put("ci1", prsexobjlist.q1q4ci1)
+            q1q4ex.put("ci2", prsexobjlist.q1q4ci2)
+            q1q4ex.put("or", prsexobjlist.q1q4or)
+            comparisonsex.put("Q1Q4", q1q4ex)
+
+
+            contlistex.put("beta", prsexobjlist.cbeta)
+            contlistex.put("ci1", prsexobjlist.cci1)
+            contlistex.put("ci2", prsexobjlist.cci2)
+            contlistex.put("logp", prsexobjlist.lcogp)
+            contlistex.put("or", prsexobjlist.cor)
+            contlistex.put("sebeta", prsexobjlist.csebata)
+            comparisonsex.put("continuous", contlistex)
+
+
+            categorylistex = prsexobjlist.category
+            codelistex = prsexobjlist.code
+            numcaselistex = prsexobjlist.numcases
+            numconlistex = prsexobjlist.numcont
+            sexlistex = prsexobjlist.sex
+            pbsstringlistex = prsexobjlist.pstring
+
+            phewas_ex_df.put("category", categorylistex)
+            phewas_ex_df.put("code", codelistex)
+            phewas_ex_df.put("comparisons", comparisonsex)
+            phewas_ex_df.put("num_cases", numcaselistex)
+            phewas_ex_df.put("num_controls", numconlistex)
+            phewas_ex_df.put("sex", sexlistex)
+            phewas_ex_df.put("string", pbsstringlistex)
+
+            phewasexdf_json = gson.toJson(phewas_ex_df);
+
+
+
+        }
+        else
+        {
+            println("exclusion file doesnt exists")
+        }
+
+
+        def check = phewas_df as JSON
+        datajson.put("phewas_df",phewas_df)
+        datajson.put("phewas_ex_df",phewas_ex_df)
+        def dataRes = gson.toJson(datajson)
+
+
+
+        if(params?.f && params.f != "html"){
+            response.contentType = grailsApplication.config.grails.mime.types[params.f]
+            response.setHeader("Content-disposition", "attachment; filename=books.${params.extension}")
+
+            exportService.export(params.f, response.outputStream,displayObjselect, [:], [:])
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        }
+
+
+
+
+
+        def endoffun = new Date()
+        TimeDuration duration3 = TimeCategory.minus(endoffun, timeStart)
+        println("Total duration:  $duration3")
+
+
+        [dataRes:dataRes,prsobjlist:prsobjlist.sort{a,b -> a.prsp <=> b.prsp},prsexobjlist:prsexobjlist,inputid:inputid,dispObj:dispObj]
+
+
+    }
+
+    def downloadPhewasFile()
+    {
+        println(params)
+    }
+
+
+    //for version 20190429
+    def showGraphOld() {
 
         def timeStart = new Date()
         def timereadingfiledone
@@ -261,7 +968,7 @@ THis part will be needed for the tree view
 
         def datadirpath = ''
         if (Environment.current == Environment.DEVELOPMENT) {
-            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version5/PRSweb_Update_20190801/data/'
         } else
         if (Environment.current == Environment.TEST) {
             datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'

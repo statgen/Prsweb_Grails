@@ -49,7 +49,8 @@ pre {
 }
 a.navbar-brand {
     color: white !important;
-    font-size: 19px !important;
+    font-size: 31px !important;
+    padding-top: 20px;
 }
 .navbar-dark .navbar-nav>.active>a, .navbar-dark .navbar-nav>.active>a:hover, .navbar-dark .navbar-nav>.active>a:focus {
     background-color: transparent;

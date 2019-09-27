@@ -10,6 +10,7 @@
     <asset:link rel="icon" href="favicon.ico" type="image/x-ico"/>
 
     <asset:stylesheet src="application.css"/>
+    <script src="https://kit.fontawesome.com/53d3e070e7.js"></script>
     <style>
 
 
@@ -30,7 +31,7 @@
 <div class="navbar navbar-light navbar-static-top"  role="navigation">
     <div class="navbar-header">
 
-        <a class="navbar-brand mx-auto" href="#">PRS-Web</a>
+        <a class="navbar-brand mx-auto" href="#" style="text-decoration:none;">Cancer-PRSweb</a>
         <a class="navbar-brand mx-aut" href="/#">
             <a class="navbar-center" href="${createLink(uri: '/')}"><img src="${resource(dir: 'images', file: 'umich-logo.png')}" alt="GSE" style="height:auto; width: 5em;" /></a>
 
@@ -46,13 +47,17 @@
 <div class="nav" role="navigation" style="padding-top:1px;">
     <ul>
 
-        <li><a  href="${createLink(uri: '/')}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+        <li><a  href="${createLink(uri: '/')}"><span class="glyphicon glyphicon-home"></span><i class="fas fa-home"></i> Home</a></li>
+        <li><g:link controller="phecodeData" action="searchPhecode"><span class="glyphicon glyphicon-th-list"></span> <i class="fas fa-search"></i> SearchPhecode</g:link></li>
+        <li><g:link controller="phecodeData" action="index"><span class="glyphicon glyphicon-th-list"></span> <i class="fas fa-search"></i> Phocode data lookup </g:link></li>
+
 
         %{--<li><g:link controller="jobque" action="tutorials">Tutorials</g:link></li>
         <li><g:link controller="jobque" action="news">News</g:link></li>
-        <li><g:link controller="jobque" action="contact">Contact Us</g:link></li>--}%
-        <li><g:link controller="displayData" action="showGraph "><span class="glyphicon glyphicon-th-list"></span> Get Results</g:link></li>
-        <li><g:link controller="displayData" action="contact "><span class="glyphicon glyphicon-th-list"></span> Contact</g:link></li>
+        <li><g:link controller="jobque" action="contact">Contact Us</g:link></li>
+        <li><g:link controller="displayData" action="showGraph "><span class="glyphicon glyphicon-th-list"></span> Get Results</g:link></li>--}%
+        <li><g:link controller="displayData" action="contact "><span class="glyphicon glyphicon-th-list"></span> <i class="far fa-address-card"></i> Contact</g:link></li>
+
         %{-- <li><g:link controller="publications" action="index"><span class="glyphicon glyphicon-list-alt"></span> Publications</g:link></li>
          --}%%{--<li><g:link controller="peptides" action="peptidesdataTables"><span class="glyphicon glyphicon-list-alt"></span> Peptides</g:link></li>--}%%{--
           <li><g:link controller="peptides" action="peptideServerCalls" params="[pubid :'',ondiff:'',q:'']">Novel Peptides</g:link></li>--}%

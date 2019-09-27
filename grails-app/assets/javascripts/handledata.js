@@ -15,7 +15,7 @@ NOTE: OR: "how much does trait incidence change b/w A and B?"
     - "continuous PRS": across one stdev (current)
     - b/w Q1 and Q4 (interpretable)
 */
-console.log("from handledatajs");
+//console.log("from handledatajs");
 LocusZoom.ScaleFunctions.add("effect_direction", function (parameters, input) {
     if (typeof input !== "undefined" && !isNaN(input['phewas:beta'])) {
         if (input['phewas:beta'] > 0) {
@@ -27,14 +27,14 @@ LocusZoom.ScaleFunctions.add("effect_direction", function (parameters, input) {
 
     return null;
 });
-console.log("2");
+//console.log("2");
 LocusZoom.TransformationFunctions.set('2sigfigs', function (x) {
     return x.toPrecision(2);
 });
-console.log("3");
+//console.log("3");
 var handle_data = function handle_data(data) {
-    console.log("inside handledata.js loop");
-    console.log(data);
+    //console.log("inside handledata.js loop");
+    //console.log(data);
     document_ready().then(function () {
         _d.data = data;
         data.PRS_code_string = data.PRS_code_strings[data.PRS_code];
@@ -82,18 +82,18 @@ var make_drilldown = function make_drilldown(data) {
 
 var make_plots = function make_plots(data) {
 
-    console.log()
+    //console.log()
     var y_axis_max = Math.max(5, // show sig line
         d3.max(data.phewas_df.comparisons['continuous'].logp) * 1.15, //upper_buffer
         d3.max(data.phewas_ex_df.comparisons['continuous'].logp) * 1.15);
-    console.log("4");
+    //console.log("4");
     var phewas_plot = make_scatter_plot(data.phewas_df, "Figure 1: ".concat(data.PRS_code_string, " PRS (").concat(data.PRS_code, ")"), data.color_by_category, y_axis_max, 'phewas');
-    console.log("5");
+    //console.log("5");
     phewas_plot.on("element_clicked", function (elem) {
         var id = elem.data['phewas:id'];
         make_forest_plot_for_id(data.phewas_df, id);
     });
-    console.log("6");
+    //console.log("6");
     var phewas_ex_plot = make_scatter_plot(data.phewas_ex_df, "Figure 2: ".concat(data.PRS_code_string, " PRS (").concat(data.PRS_code, ") (exclusion)"), data.color_by_category, y_axis_max, 'phewas_ex');
 
     var pheno_id_with_strongest_pval = _.max(_.range(_d.data.phewas_df.comparisons.continuous.logp.length), function (id) {
@@ -105,8 +105,8 @@ var make_plots = function make_plots(data) {
 
 var make_scatter_plot = function make_scatter_plot(df, title, color_by_category, y_axis_max, div_id) {
     _d.plots = _d.plots || {};
-    console.log("inside the make scatterplot");
-    console.log(df);
+    //console.log("inside the make scatterplot");
+    //console.log(df);
     var y_scale;
     var y_ticks = [];
 
@@ -205,7 +205,7 @@ var make_scatter_plot = function make_scatter_plot(df, title, color_by_category,
         oddsratio: df.comparisons['continuous'].or
     };
     console.log("logp value");
-    console.log(scatter_data);
+    //console.log(scatter_data);
     _d.plots[div_id] = {
         scatter_data: scatter_data
     };
