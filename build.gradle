@@ -12,7 +12,7 @@ buildscript {
     }
 }
 
-version "0.1"
+version ""
 group "prsweb"
 
 apply plugin:"eclipse"
@@ -91,7 +91,7 @@ assets {
                        enabled: true,
                        processor: 'webpack',
                        processJsFiles: false,
-                      // nodeExec: "/usr/local/bin/node"
+                       nodeExec: "/usr/local/bin/node"
 
 
                ]
@@ -111,12 +111,15 @@ test{
     exclude '**/DisplayDataControllerSpec.class'
     exclude '**/PhecodeControllerSpec.class'
     exclude '**/PhecodeSpec.class'
+    exclude '**/PhecodeDataSpec.class'
     exclude '**/DisplayDataSpec.class'
     exclude '**/PhenotypecatSpec.class'
     exclude '**/PhenotypecatControllerSpec.class'
     exclude '**/DisplayDataServiceSpec.class'    
     exclude '**/PhecodeServiceSpec.class'
     exclude '**/PhenotypecatServiceSpec.class'
+    exclude '**/PhecodedataControllerSpec.class'
+
     
 
 }
@@ -126,6 +129,7 @@ integrationTest{
     exclude '**/PhenotypecatServiceSpec.class'
     exclude '**/PhecodeServiceSpec.class'
     exclude '**/DisplayDataServiceSpec.class'
+    exclude '**/PhecodedataServiceSpec.class'
 
 
 }

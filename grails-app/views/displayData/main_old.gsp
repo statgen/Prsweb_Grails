@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143045158-2"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'UA-143045158-2');
-    </script>
-
     <meta name="layout" content="main" />
     <asset:javascript src="jquery-3.3.1.js"/>
     <asset:javascript src="jquery.tablesorter.min.js"/>
@@ -23,17 +13,6 @@
     <title><g:message code="default.create.label" args="[entityName]" /></title>
     <STYLE>
     div.drilldown { display: inline-block; }
-
-    .center {
-        display: flex;
-        justify-content: space-between;
-
-    }
-
-    a {
-        text-decoration: none;
-    }
-
     </STYLE>
     <g:javascript library='jquery'>
 
@@ -44,7 +23,7 @@
                 var pcode= '${inputprscode}';
                 var pstudy = '${inprsstudy}';
                 //console.log(pstudy);
-
+                $('#select_phenomes').append(new Option(pstudy, "value",true,true));
 
                  var select = document.getElementById("select_desc");
                     for(var i = 0;i < select.options.length;i++){
@@ -60,7 +39,7 @@
                                             }
 
 
-               //document.getElementById('pheinfo').style.visibility = "hidden";
+               document.getElementById('pheinfo').style.visibility = "hidden";
            $('[data-toggle="popover"]').popover();
 
                $("#pheinfo").tablesorter({
@@ -395,29 +374,28 @@
 
 
                                                                     var str = '<tr>'
-    +'<td>'+resobj1[j].model+'</td>'
-    +'<td>'+prsdesc+'</td>'
-    +'<td>'+resobj1[j].prsmethod+'</td>'
-    +'<td>'+resobj1[j].tunp+'</td>'
-    +'<td>'+resobj1[j].snp+'</td>'
-    +'<td>'+pval+'</td>'
-    // +'<td>'+resobj1[j].r2nag.toPrecision(2)+'</td>'
-    +'<td>'+resobj1[j].r2nag+'</td>'
-    +'<td>'+resobj1[j].brier+'</td>'
-    +'<td>'+resobj1[j].auc+'</td>'
-    +'<td>'+resobj1[j].aucci+'</td>'
-    +'<td>'+resobj1[j].hom_p+'</td>'
-    +'<td>'+resobj1[j].hom_chi+'</td>'
+                                                                        +'<td>'+resobj1[j].model+'</td>'
+                                                                        +'<td>'+prsdesc+'</td>'
+                                                                        +'<td>'+resobj1[j].prsmethod+'</td>'
+                                                                        +'<td>'+resobj1[j].tunp+'</td>'
+                                                                        +'<td>'+resobj1[j].snp+'</td>'
+                                                                        +'<td>'+pval+'</td>'
+                                                                        +'<td>'+resobj1[j].r2nag.toPrecision(2)+'</td>'
+                                                                        +'<td>'+resobj1[j].brier+'</td>'
+                                                                        +'<td>'+resobj1[j].auc+'</td>'
+                                                                        +'<td>'+resobj1[j].aucci+'</td>'
+                                                                        +'<td>'+resobj1[j].hom_p+'</td>'
+                                                                        +'<td>'+resobj1[j].hom_chi+'</td>'
 
 
-    +'<td>'+topor+'</td>'
-    +'<td>'+topci+','+topci2+'</td>'
+                                                                        +'<td>'+topor+'</td>'
+                                                                        +'<td>'+topci+','+topci2+'</td>'
 
-    +'<td>'+linkpage+'</td>'
-    +'<td data-toggle="popover" data-trigger="hover" title="'+poptext+'">' + filelinkpage+ signline+'</td>'
+                                                                        +'<td>'+linkpage+'</td>'
+                                                                        +'<td data-toggle="popover" data-trigger="hover" title="'+poptext+'">' + filelinkpage+ signline+'</td>'
 
 
-    +'</tr>';
+                                                                        +'</tr>';
 
                                             tbodyup = tbodyup+str;
 signline ='';
@@ -443,49 +421,79 @@ signline ='';
                                 $("#pheinfo").find('tbody').empty();
 
                                $("#pheinfo").trigger("destroy").append(tbodyup).tablesorter({
-                theme: 'blue',
-                widthFixed: true,
-                  sortList: [[6,1]],
 
-                widgets: ['zebra', 'stickyHeaders', 'filter'],
-                widgetOptions : {
-                    // Use the $.tablesorter.storage utility to save the most recent filters
-                    filter_saveFilters : true,
-                    // jQuery selector string of an element used to reset the filters
-                    filter_reset : 'button.reset',
-                    // add custom selector elements to the filter row
-                    filter_formatter : {
+                                 theme : 'blue',
 
-                        // Alphanumeric (match)
+                                sortList: [[6,1]],
+                                widthFixed : true,
+
+                                // initialize zebra striping and filter widgets
+                                widgets: ["zebra", "filter"],
+
+                                widgetOptions : {
+                                filter_cssFilter   : '',
+
+                              // If there are child rows in the table (rows with class name from "cssChildRow" option)
+                              // and this option is true and a match is found anywhere in the child row, then it will make that row
+                              // visible; default is false
+                              filter_childRows   : false,
+
+                              // if true, filters are collapsed initially, but can be revealed by hovering over the grey bar immediately
+                              // below the header row. Additionally, tabbing through the document will open the filter row when an input gets focus
+                              filter_hideFilters : false,
+
+                              // Set this option to false to make the searches case sensitive
+                              filter_ignoreCase  : true,
+
+                              // jQuery selector string of an element used to reset the filters
+                              filter_reset : '.reset',
+
+                              // Use the $.tablesorter.storage utility to save the most recent filters
+                              filter_saveFilters : true,
+
+                              // Delay in milliseconds before the filter widget starts searching; This option prevents searching for
+                              // every character while typing and should make searching large tables faster.
+                              filter_searchDelay : 300,
+
+                              // Set this option to true to use the filter to find text from the start of the column
+                              // So typing in "a" will find "albert" but not "frank", both have a's; default is false
+                              filter_startsWith  : false,
 
 
-                        // Alphanumeric (exact)
-                        1 : function($cell, indx) {
-                            return $.tablesorter.filterFormatter.select2( $cell, indx, {
-                                match : false // exact match only
-                            });
-                        },
-                        2 : function($cell, indx) {
-                            return $.tablesorter.filterFormatter.select2( $cell, indx, {
-                                match : true,         // adds "filter-match" to header
-                                cellText : 'Match: ', // Cell text
-                                width: '85%',         // adjusted width to allow for cell text
-                                value: ['Lassosum','P&T','P&G'] // initial values
-                            });
-                        }
-                    },
+                             filter_functions : {
 
-                    // option added in v2.16.0
-                    filter_selectSource : {
-                        // Alphanumeric match (prefix only)
-                        // added as select2 options (you could also use select2 data option)
-                        2 : function(table, column) {
-                            return ['P&T', 'Lassosum','P_5e-06','P_5e-05','P_5e-09','P_5e-07','P&G'];
-                        }
-                    }
-                }
+                                // Add select menu to this column
+                                // set the column value to true, and/or add "filter-select" class name to header
+                                // '.first-name' : true,
 
-            });
+                                // Exact match only
+                                1 : function(e, n, f, i, $r, c, data) {
+                                  return e === f;
+                                },
+
+                                // Add these options to the select dropdown (regex example)
+                                2 : {
+                                  "p&T" : function(e, n, f, i, $r, c, data) { return e =='p&T'; },
+                                  "P_5e-05" : function(e, n, f, i, $r, c, data) { return e =='P_5e-05'; }
+
+                                },
+
+                                // Add these options to the select dropdown (numerical comparison example)
+                                // Note that only the normalized (n) value will contain numerical data
+                                // If you use the exact text, you'll need to parse it (parseFloat or parseInt)
+                               3 : {
+                                  "< $10"      : function(e, n, f, i, $r, c, data) { return n < 10; },
+                                  "$10 - $100" : function(e, n, f, i, $r, c, data) { return n >= 10 && n <=100; },
+                                  "> $100"     : function(e, n, f, i, $r, c, data) { return n > 100; }
+                                }
+                              }
+                              }
+
+
+
+
+
+                          });
 
                       document.getElementById('pheinfo').style.visibility = "visible";
 
@@ -496,20 +504,6 @@ signline ='';
 
 
 
-
-
-
-                        }
-
-
-                        function createLink(response){
-                     var prswtsel = $("#select_desc").val();
-                    var phenocatsel = $("#select_PRS_code").val();
-                    var phenomesel = $('#select_phenomes').val();
-                     var oddssel = $('#select_odds').val();
-
-                      var filepathlink = '${createLink(action:'displayTable')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
-                      window.location.href =filepathlink;
 
 
 
@@ -553,183 +547,129 @@ signline ='';
 <div class="nav" role="navigation">
 
 </div>
-<div id="create-displayData" class="content scaffold-create" role="main">
-    %{--<div class="container-fluid">
-
-        <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0">Overview</h1>
-
-
-        <div class="row text-center text-lg-left">
-
-            <div class="col-lg-3 col-md-4 col-6">
-                <a href="#" class="d-block mb-4 h-200">
-                    <img class="img-fluid img-thumbnail" src="${resource(dir: 'images', file: 'tabledata.png')}" alt="">
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <a href="#" class="d-block mb-4 h-100">
-                    <img class="img-fluid img-thumbnail" src="${resource(dir: 'images', file: 'prs.png')}" alt="">
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <a href="#" class="d-block mb-4 h-100">
-                    <img class="img-fluid img-thumbnail" src="${resource(dir: 'images', file: 'weightfile.png')}" alt="">
-                </a>
-            </div>
-
-
-        </div>
-
-    </div>--}%
-    <!-- /.container -->
-    <div class="container-fluid text-center" style="background-color: white; margin-left: 5px;">
-
-        <h1>Overview</h1>
-
-
-
-
-
-
-
-        <div class="row mx-auto my-auto" >
-
-
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="card border-dark">
-                        <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'tabledata.png')}" alt="GSE" class="card-img-top" width="500" height="300" /></a>
-                        <div class="card-block">
-
-                        </div>
-                        <div class="card-footer">
-                            <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">Table View</a>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="card border-dark" >
-
-                        <a href="${createLink(action:'showGraph')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=549" class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'prs.png')}" alt="GSE" class="card-img-top" width="500" height="300" /></a>
-
-                        <div class="card-block">
-
-                        </div>
-                        <div class="card-footer">
-                            <a href="${createLink(action:'showGraph')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=549" class="btn stretched-link" target="_blank">PRS View</a>
-
-
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="card border-dark" >
-                        <a href="${createLink(action:'downloadFile')}?filename=PRSWEB_PHECODE174.1_Onco-iCOGS-ER-positive-BRCA_LASSOSUM_MGI_20191112&type=weight"  class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'weightfile.png')}" alt="GSE" class="card-img-top" width="500" height="300"/></a>
-
-
-                        <div class="card-block">
-
-                        </div>
-                        <div class="card-footer">
-                            <a href="${createLink(action:'downloadFile')}?filename=PRSWEB_PHECODE174.1_Onco-iCOGS-ER-positive-BRCA_LASSOSUM_MGI_20191112&type=weight" class="btn stretched-link" target="_blank">Weight File</a>
-
-
-                        </div>
-                    </div>
-                </div>
-
-        </div>
-    </div>
-
+<div id="create-displayData" class="content scaffold-create mt-5" role="main">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 mt-2">
+            <div class="col-12">
                 <div class="card"><div class="card-body">
-
+                    <h1>Overview</h1>
                     Integrating published and freely available genome-wide association studies (GWAS) summary statistics from multiple sources: published GWAS, the NHGRI-EBI GWAS Catalog, or UKB-based GWAS, we created an online repository for polygenic risk scores (PRS) for common cancer traits. Our framework condenses these summary statistics into PRS using linkage disequilibrium pruning and p-value thresholding (fixed or data-adaptively optimized thresholds), or penalized, genome-wide effect size weighting.
                     We evaluate them in the cancer-enriched cohort of the Michigan Genomics Initiative (MGI), a longitudinal biorepository effort at Michigan Medicine, and in the population-based UK Biobank Study (UKB). For each PRS construct, measures on performance, calibration, and differentiation are provided.
                     Besides the cancer PRS evaluation in MGI and UKB, the PRSweb platform features construct downloads, risk evaluation in the top percentiles as well as phenome-wide PRS association studies (PRS PheWAS) for a subset of PRS that are predictive for the primary cancer.
-                    <br/>
-                    For more information, see our Previous publication on <a href="https://doi.org/10.1101/384909" target="_blank"> skin cancer PRS  </a> and the "Method" tab on top of this page.
+                <br/>
+                    For more information, see our <a href="https://doi.org/10.1101/384909" target="_blank">Previous publication on skin cancer PRS</a> and the "Method" tab on top of this page.
+
+
                 </div>
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="container-fluid">   <div class="row">
+        <div class="col-12 mt-2">
+            <div class="card"><div class="card-body">
+                %{-- <g:form controller="DisplayData" action="showGraph" method="post" id="upform" name="upform" enctype="multipart/form-data">--}%
+                %{--<div class="drilldown mr-2">
+               <label for="select_PRS_code" class="mb-0">Phenotype Category</label><br/>
+                    <g:select name="phenocat" id="select_PRS_code" class="form-control" from="${phenocat.phename}">
 
-        <div class="row">
-            <div class="col-12 mt-2">
-                <div class="card"><div class="card-body">
-                    %{-- <g:form controller="DisplayData" action="showGraph" method="post" id="upform" name="upform" enctype="multipart/form-data">--}%
-                    %{--<div class="drilldown mr-2">
-                   <label for="select_PRS_code" class="mb-0">Phenotype Category</label><br/>
-                        <g:select name="phenocat" id="select_PRS_code" class="form-control" from="${phenocat.phename}">
+                            <option value="${phenocat.phename}">${phenocat.phename}</option>
+                    </g:select>
+                </div>--}%
 
-                                <option value="${phenocat.phename}">${phenocat.phename}</option>
-                        </g:select>
-                    </div>--}%
-
-
-
-                    <div class="drilldown mr-2">
-                        <label for="select_desc" class="mb-0"> Cancer Trait</label>
-                        <select name="select_desc" id="select_desc" class="form-control">
-                            <option value="">Select Cancer Site/Trait</option>
-                            <g:each in="${phecodeuniquedata}" status="i" var="dm">
-                                <option value="${dm.phecodeid}">${dm.phecodedesc} &nbsp;(${dm.phecodeid})</option>
-                            </g:each>
-                        </select>
-
-                    </div>
-
-                    <div class="drilldown mr-2">
-                        <label for="select_phenomes"  class="form-check-label">Evaluation Cohort</label>
-                        <select name="select_phenomes" id="select_phenomes" class="form-control" >
-                            <option value="">Select Cohort</option>
-                        </select>
-                    </div>
-
-                    <div class="drilldown mr-2">
-                        <label for="select_odds"  class="form-check-label">Odds Ratio Top</label>
-                        <select name="select_odds" id="select_odds" class="form-control">
-                            <option value="1"> 1% vs Rest </option>
-                            <option value="2"> 2% vs Rest </option>
-                            <option value="5"> 5% vs Rest </option>
-                            <option value="10"> 10% vs Rest </option>
-                            <option value="25"> 25% vs Rest </option>
-                        </select>
-                    </div>
-
-
-
-
-
-                    <div class="drilldown mr-2">
-                        <button onclick="createLink()">Show table with PRS</button>
-                        %{--<g:submitButton name="Search" class="submit"/>--}%
-                        %{--  <g:submitButton name="submit" onclick="validateForm()" class="upload" value="upload"
-                                          style="color: #0F226E;padding: 10px 32px; font-family: Georgia, serif;border-radius: 8px;box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); font-size: 15px;;font-style:bold;"/>
-                    --}%
-
-                    </div>
-
-
-
+                <div class="drilldown mr-2">
+                    <label for="select_desc" class="mb-0"> Cancer Trait</label>
+                    <select name="select_desc" id="select_desc" class="form-control">
+                        <option value="">Select Cancer Site/Trait</option>
+                        <g:each in="${phecodeuniquedata}" status="i" var="dm">
+                            <option value="${dm.phecodeid}">${dm.phecodedesc}(${dm.phecodeid})</option>
+                        </g:each>
+                    </select>
 
                 </div>
 
+                <div class="drilldown mr-2">
+                    <label for="select_phenomes"  class="form-check-label">Evaluation Cohort</label>
+                    <g:select name="select_phenomes" id="select_phenomes" class="form-control" from="" noSelection="['':'- Choose PRS weights-']">
+                        <option value="${drilldown}">${drilldown.phenomes} </option>
+                    </g:select>
+                </div>
 
+                <div class="drilldown mr-2">
+                    <label for="select_odds"  class="form-check-label">Odds Ratio Top</label>
+                    <select name="select_odds" id="select_odds" class="form-control">
+                        <option value="1"> 1% vs Rest </option>
+                        <option value="2"> 2% vs Rest </option>
+                        <option value="5"> 5% vs Rest </option>
+                    </select>
                 </div>
 
 
+
+
+
+                <div class="drilldown mr-2">
+                    %{--<g:submitButton name="Search" class="submit"/>--}%
+
+                    <button onclick="displayTable()">Show table</button>
+
+                </div>
 
 
             </div>
+
+                <div class="table-bordered table-responsive fixed-table-body text-center">
+                    <table class="table-striped table-bordered table-light " style="border: 1px solid #ddd !important;" id='pheinfo'>
+                        <thead class="thead-light">
+                        <tr>
+                            <th class="sorter-false"></th>
+                            <th class="sorter-false"></th>
+                            <th class="sorter-false"></th>
+                            <th class="sorter-false"></th>
+                            <th class="sorter-false"></th>
+                            <th class="sorter-false">Association</th>
+                            <th colspan="2" align="center"> Overall Performance</th>
+                            <th colspan="2" align="center" class="sorter-false">Discrimination/AUC</th>
+                            <th colspan="2" align="center" class="sorter-false"> Hosmer-lemeshow Test Statistics</th>
+
+                            <th colspan="2" align="center" class="sorter-false" id="headId"> </span>Odds Ratio Top 1% vs Rest</th>
+                            <th class="sorter-false"></th>
+                            <th class="sorter-false"></th>
+
+                        </tr>
+                        <tr>
+                            <th class="sorter-false"> GWAS Source<br/>/ Phenotype Model</th>
+                            <th class="sorter-false">Phenotype Model <br/> Description</th>
+                            <th data-column="P&T" class="filter-select filter-onlyAvail">Method</th>
+                            <th class="filter-false">Tuning Parameter</th>
+                            <th class="filter-false"># SNPs</th>
+                            <th>P-value</th>
+                            <th class="filter-false">Pseudo-R2</th>
+                            <th class="filter-false">Brier Score</th>
+                            <th class="filter-false">Estimate</th>
+                            <th class="filter-false">95%CI</th>
+                            <th class="filter-false">P</th>
+                            <th class="filter-false">Chi-Square</th>
+                            <th class="filter-false">Estimate</th>
+                            <th class="filter-false">95 % CI</th>
+                            <th class="sorter-false,filter-false">PRS PheWAS</th>
+                            <th class="sorter-false,filter-false"> Download PRS</th>
+                        </tr>
+                        </thead>
+                        <tbody id="insertfirsttable">
+
+
+
+                        </tbody>
+
+
+                    </table>
+                </div>
+
+            </div>
         </div></div>
-
-
-</div>
+    </div>
 
 
 </div>

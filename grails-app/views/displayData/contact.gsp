@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
     <head>
         <meta name="layout" content="main" />
         <g:set var="entityName" value="${message(code: 'displayData.label', default: 'DisplayData')}" />
         <title><g:message code="default.show.label" args="[entityName]" /></title>
+        <style>
+
+        </style>
     </head>
     <body>
     <div id="create-displayData" class="content scaffold-create mt-5" role="main">
@@ -11,50 +14,34 @@
             <div class="card">
         <div class="row">
 
-            <div class="col-12 col-md-10">
+            <div class="col-12 col-md-12">
 
-                <h3>CONTACT</h3>
-                <p>Site created by Snehal Patil, snehal@med.umich.edu</p>
-                <p>Contributors: Lars Fritsche, Lauren J Beesley, and Bhramar Mukherjee</p>
-                <p class="mb-0">Contact: Bhramar Mukherjee (bhramar@umich.edu) and Lars Fritsche (larsf@umich.edu), 1415 Washington Heights, Ann Arbor MI, 48109</p>
-                <p>University of Michigan Center for Precision Health Data Science</p>
+                <h3><b>CONTACT</b></h3>
 
-                <form class="form-horizontal" action="" method="post">
-                    <fieldset>
-                        <legend class="text-center">Contact us</legend>
+                <p>Site created by Snehal Patil, <u>snehal@med.umich.edu</u></p>
+                <br/>
 
-                        <!-- Name input-->
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="name">Name</label>
-                            <div class="col-md-9">
-                                <input id="name" name="name" type="text" placeholder="Your name" class="form-control">
-                            </div>
-                        </div>
+                <p><b>Contributors</b>: Lars G. Fritsche, Snehal Patil, Robert B. Peng, Jiahan Chen, Daniel Taliun, Maxwell Salvatore, and Bhramar Mukherjee
+            </p>
+                <br/>
 
-                        <!-- Email input-->
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="email">Your E-mail</label>
-                            <div class="col-md-9">
-                                <input id="email" name="email" type="text" placeholder="Your email" class="form-control">
-                            </div>
-                        </div>
+                <p><b>Project PIs / Correspondence</b>: larsf@umich.edu and bhramar@umich.edu </p>
+                <br/>
+                <p ><b>Contact:</b> Bhramar Mukherjee (bhramar@umich.edu) and Lars Fritsche (larsf@umich.edu),
 
-                        <!-- Message body -->
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="message">Your message</label>
-                            <div class="col-md-9">
-                                <textarea class="form-control" id="message" name="message" placeholder="Please enter your message here..." rows="5"></textarea>
-                            </div>
-                        </div>
 
-                        <!-- Form actions -->
-                        <div class="form-group">
-                            <div class="col-md-12 text-right">
-                                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
+
+                <p><a href="https://sph.umich.edu/precision-health-data-science">Center for Precision Health Data Science </a></p>
+                <p>Department of Biostatistics</p>
+                <p>School of Public Health</p>
+                <p>University of Michigan</p>
+                <p>1415 Washington Heights</p>
+                <p> Ann Arbor, MI 48109-2029</p>
+                <br/>
+
+                </p>Fax: 734-763-2215</p>
+
+
             </div></div>
 
 

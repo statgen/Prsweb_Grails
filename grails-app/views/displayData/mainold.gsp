@@ -395,29 +395,29 @@
 
 
                                                                     var str = '<tr>'
-    +'<td>'+resobj1[j].model+'</td>'
-    +'<td>'+prsdesc+'</td>'
-    +'<td>'+resobj1[j].prsmethod+'</td>'
-    +'<td>'+resobj1[j].tunp+'</td>'
-    +'<td>'+resobj1[j].snp+'</td>'
-    +'<td>'+pval+'</td>'
-    // +'<td>'+resobj1[j].r2nag.toPrecision(2)+'</td>'
-    +'<td>'+resobj1[j].r2nag+'</td>'
-    +'<td>'+resobj1[j].brier+'</td>'
-    +'<td>'+resobj1[j].auc+'</td>'
-    +'<td>'+resobj1[j].aucci+'</td>'
-    +'<td>'+resobj1[j].hom_p+'</td>'
-    +'<td>'+resobj1[j].hom_chi+'</td>'
+                                                                        +'<td>'+resobj1[j].model+'</td>'
+                                                                        +'<td>'+prsdesc+'</td>'
+                                                                        +'<td>'+resobj1[j].prsmethod+'</td>'
+                                                                        +'<td>'+resobj1[j].tunp+'</td>'
+                                                                        +'<td>'+resobj1[j].snp+'</td>'
+                                                                        +'<td>'+pval+'</td>'
+                                                                        // +'<td>'+resobj1[j].r2nag.toPrecision(2)+'</td>'
+                                                                        +'<td>'+resobj1[j].r2nag+'</td>'
+                                                                        +'<td>'+resobj1[j].brier+'</td>'
+                                                                        +'<td>'+resobj1[j].auc+'</td>'
+                                                                        +'<td>'+resobj1[j].aucci+'</td>'
+                                                                        +'<td>'+resobj1[j].hom_p+'</td>'
+                                                                        +'<td>'+resobj1[j].hom_chi+'</td>'
 
 
-    +'<td>'+topor+'</td>'
-    +'<td>'+topci+','+topci2+'</td>'
+                                                                        +'<td>'+topor+'</td>'
+                                                                        +'<td>'+topci+','+topci2+'</td>'
 
-    +'<td>'+linkpage+'</td>'
-    +'<td data-toggle="popover" data-trigger="hover" title="'+poptext+'">' + filelinkpage+ signline+'</td>'
+                                                                        +'<td>'+linkpage+'</td>'
+                                                                        +'<td data-toggle="popover" data-trigger="hover" title="'+poptext+'">' + filelinkpage+ signline+'</td>'
 
 
-    +'</tr>';
+                                                                        +'</tr>';
 
                                             tbodyup = tbodyup+str;
 signline ='';
@@ -584,7 +584,6 @@ signline ='';
     <!-- /.container -->
     <div class="container-fluid text-center" style="background-color: white; margin-left: 5px;">
 
-        <h1>Overview</h1>
 
 
 
@@ -592,67 +591,21 @@ signline ='';
 
 
 
-        <div class="row mx-auto my-auto" >
 
 
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="card border-dark">
-                        <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'tabledata.png')}" alt="GSE" class="card-img-top" width="500" height="300" /></a>
-                        <div class="card-block">
-
-                        </div>
-                        <div class="card-footer">
-                            <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">Table View</a>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="card border-dark" >
-
-                        <a href="${createLink(action:'showGraph')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=549" class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'prs.png')}" alt="GSE" class="card-img-top" width="500" height="300" /></a>
-
-                        <div class="card-block">
-
-                        </div>
-                        <div class="card-footer">
-                            <a href="${createLink(action:'showGraph')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=549" class="btn stretched-link" target="_blank">PRS View</a>
-
-
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="card border-dark" >
-                        <a href="${createLink(action:'downloadFile')}?filename=PRSWEB_PHECODE174.1_Onco-iCOGS-ER-positive-BRCA_LASSOSUM_MGI_20191112&type=weight"  class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'weightfile.png')}" alt="GSE" class="card-img-top" width="500" height="300"/></a>
-
-
-                        <div class="card-block">
-
-                        </div>
-                        <div class="card-footer">
-                            <a href="${createLink(action:'downloadFile')}?filename=PRSWEB_PHECODE174.1_Onco-iCOGS-ER-positive-BRCA_LASSOSUM_MGI_20191112&type=weight" class="btn stretched-link" target="_blank">Weight File</a>
-
-
-                        </div>
-                    </div>
-                </div>
-
-        </div>
-    </div>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 mt-2">
-                <div class="card"><div class="card-body">
+                <div class="card"><div class="card-body text-justify">
+                    <h1>Overview</h1>
 
-                    Integrating published and freely available genome-wide association studies (GWAS) summary statistics from multiple sources: published GWAS, the NHGRI-EBI GWAS Catalog, or UKB-based GWAS, we created an online repository for polygenic risk scores (PRS) for common cancer traits. Our framework condenses these summary statistics into PRS using linkage disequilibrium pruning and p-value thresholding (fixed or data-adaptively optimized thresholds), or penalized, genome-wide effect size weighting.
-                    We evaluate them in the cancer-enriched cohort of the Michigan Genomics Initiative (MGI), a longitudinal biorepository effort at Michigan Medicine, and in the population-based UK Biobank Study (UKB). For each PRS construct, measures on performance, calibration, and differentiation are provided.
-                    Besides the cancer PRS evaluation in MGI and UKB, the PRSweb platform features construct downloads, risk evaluation in the top percentiles as well as phenome-wide PRS association studies (PRS PheWAS) for a subset of PRS that are predictive for the primary cancer.
-                    <br/>
-                    For more information, see our Previous publication on <a href="https://doi.org/10.1101/384909" target="_blank"> skin cancer PRS  </a> and the "Method" tab on top of this page.
-                </div>
+            Integrating published and freely available genome-wide association studies (GWAS) summary statistics from multiple sources: published GWAS, the NHGRI-EBI GWAS Catalog, or UKB-based GWAS, we created an online repository for polygenic risk scores (PRS) for common cancer traits. Our framework condenses these summary statistics into PRS using linkage disequilibrium pruning and p-value thresholding (fixed or data-adaptively optimized thresholds), or penalized, genome-wide effect size weighting.
+            We evaluate them in the cancer-enriched cohort of the Michigan Genomics Initiative (MGI), a longitudinal biorepository effort at Michigan Medicine, and in the population-based UK Biobank Study (UKB). For each PRS construct, measures on performance, calibration, and differentiation are provided.
+            Besides the cancer PRS evaluation in MGI and UKB, the PRSweb platform features construct downloads, risk evaluation in the top percentiles as well as phenome-wide PRS association studies (PRS PheWAS) for a subset of PRS that are predictive for the primary cancer.
+            <br/>
+            For more information, see our Previous publication on <a href="https://doi.org/10.1101/384909" target="_blank"> skin cancer PRS  </a> and the "Method" tab on top of this page.
+        </div>
                 </div>
             </div>
         </div>
@@ -729,7 +682,7 @@ signline ='';
         </div></div>
 
 
-</div>
+    </div>
 
 
 </div>

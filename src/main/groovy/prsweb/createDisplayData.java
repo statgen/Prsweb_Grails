@@ -36,7 +36,7 @@ public class createDisplayData {
             // This will load the MySQL driver, each DB has its own driver
 
 
-            String filepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version5/PRSweb_Update_20190801/PRS_Evaluation_Overview_20190801_mod.txt";
+            String filepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version7/PRSweb_Update_20191112/PRS_Evaluation_Overview_20191112.txt";
 
             try {
 
@@ -106,7 +106,7 @@ public class createDisplayData {
 
                     String genld=tokens[colorder.get("genomeLD")];
                     String source=tokens[colorder.get("source")];
-                    String datecreated="2018-08-01";//tokens[colorder.get("prsweb_date")];
+                    String datecreated="2019-11-12";//tokens[colorder.get("prsweb_date")];
 
                     String topor=tokens[colorder.get("Top_0.01_OR")];
                     String toporci1=tokens[colorder.get("Top_0.01_CI1")];
@@ -120,8 +120,17 @@ public class createDisplayData {
                     String toporci15=tokens[colorder.get("Top_0.05_CI1")];
                     String toporci25=tokens[colorder.get("Top_0.05_CI2")];
 
+                    String topor10=tokens[colorder.get("Top_0.1_OR")];
+                    String toporci110=tokens[colorder.get("Top_0.1_CI1")];
+                    String toporci210=tokens[colorder.get("Top_0.1_CI2")];
+
+                    String topor25=tokens[colorder.get("Top_0.25_OR")];
+                    String toporci125=tokens[colorder.get("Top_0.25_CI1")];
+                    String toporci225=tokens[colorder.get("Top_0.25_CI2")];
+
                     String tunparam=tokens[colorder.get("Tuning_Parameters_Clean")];
                     String genome_build=tokens[colorder.get("genome_build")];
+                    String gwassource=tokens[colorder.get("gwassource")];
 
                     //"phecode"	"prefix"	"description"	"reference"	"source"	"url"	"n_cases"	"n_controls"	"sex"	"comment"	"outsource"	"prswebprefix"
                     // "genomeLD"	"genomePRS"	"method"	"Predictor"	"Tuning_Parameter"	"SNPs"	"P"	"BETA"	"SEBETA"	"OR"	"OR_CI"	"LOG10P"	"AUC"	"AUC_CI"
@@ -155,8 +164,8 @@ public class createDisplayData {
 //  `prefixdata`, `ncases`, `logpval`, `prswebprefix`, `perunpow`, `sexdata`, `warreveff`, `orcival`, `toporci2`, `source`, `topor`, `toporci1`, `genld`,
 //  `datecreated`, `tunparam`) VALUES ('232', '221', '5656', '5656', '565', '55656', '5656', '56565', '56565', '56565', '5656', '56565', '5656', '565656', '565656', '5656', '5566', '45454', '4545', '4545', '4545', '454545', '4545', '454545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '454545');
             preparedStatement = connect
-                            .prepareStatement("insert into  prsweb.display_data (id, version, aucci, hosm_p, orval, descdata, auc, refdata, urldata, brier_score, pval, phecodedata, prsweb, hosm_chi, ncontrols, nomsig, quaanal, outsource, method, phecat, r2_nage, phenomes, nsnp, prefixdata, ncases, logpval, prswebprefix, perunpow, sexdata, warreveff, orcival, toporci2, source, topor, toporci1, genld, datecreated, tunparam,genomebuild,toporci22, topor2, toporci12,toporci25, topor5, toporci15) \n" +
-                                    "values ( ?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?,?,?,?,?,?,?,?,?)");
+                            .prepareStatement("insert into  prsweb.display_data (id, version, aucci, hosm_p, orval, descdata, auc, refdata, urldata, brier_score, pval, phecodedata, prsweb, hosm_chi, ncontrols, nomsig, quaanal, outsource, method, phecat, r2_nage, phenomes, nsnp, prefixdata, ncases, logpval, prswebprefix, perunpow, sexdata, warreveff, orcival, toporci2, source, topor, toporci1, genld, datecreated, tunparam,genomebuild,toporci22, topor2, toporci12,toporci25, topor5, toporci15,gwassource,topor10,toporci110,toporci210,topor25,toporci125,toporci225 ) \n" +
+                                    "values ( ?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                     // "myuser, webpage, datum, summary, COMMENTS from feedback.comments");
                     // Parameters start with 1
                     preparedStatement.setDouble(1,count );
@@ -207,6 +216,20 @@ public class createDisplayData {
                     preparedStatement.setString(43,toporci25 );
                     preparedStatement.setString(44,topor5 );
                     preparedStatement.setString(45,toporci15 );
+                    preparedStatement.setString(46,gwassource );
+
+                    //topor10, toporci110,toporci210,topor25,toporci125,toporci225
+
+
+                    preparedStatement.setString(47,topor10 );
+                    preparedStatement.setString(48,toporci110 );
+
+                    preparedStatement.setString(49,toporci210 );
+                    preparedStatement.setString(50,topor25 );
+                    preparedStatement.setString(51,toporci125 );
+                    preparedStatement.setString(52,toporci225 );
+
+
 
                     System.out.println(preparedStatement);
 

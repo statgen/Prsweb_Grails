@@ -84,7 +84,7 @@
 
 <div id="show-phecodeData" class="content scaffold-show" role="main">
     <div class="container-fluid">
-
+        <div class="card">
             <div class="row">
                 <div class="table-bordered table-responsive fixed-table-body text-center mt-5">
                     <table class="table-striped table-bordered table-light " style="border: 1px solid #ddd !important;" id='icdinfo'>
@@ -122,7 +122,7 @@
 
 
             </div>
-
+        </div>
     </div>
 
 

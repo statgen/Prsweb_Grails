@@ -19,6 +19,9 @@ spring:
     groovy:
         template:
             check-template-location: false
+    servlet:
+         multipart:
+                location: /net/dumbo/home/snehal/tempfortomcat
 
 # Spring Actuator Endpoints are Disabled by Default
 endpoints:

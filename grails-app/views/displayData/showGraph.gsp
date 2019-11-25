@@ -1,27 +1,69 @@
 <!DOCTYPE html>
 <html>
-    <head>
+    <head><!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143045158-2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-143045158-2');
+        </script>
+
+
         <meta charset="UTF-8">
         <title>PRSweb</title>
         <meta name="layout" content="main" />
-        <asset:stylesheet href="locuszoom.css"/>
+        <link rel = "stylesheet"
+              type = "text/css"
+              href = "https://cdn.jsdelivr.net/npm/locuszoom@0.10.0-beta.1/dist/locuszoom.css" />
 
 
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-121436353-1"></script>
+
         <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','UA-121436353-1')</script>
 
         <asset:javascript src="locuszoom.vendor.min.js"/>
         <asset:javascript  src="locuszoom.app.js"/>
+
         <asset:javascript src="jquery-3.3.1.min.js" />
         <asset:javascript src="bootstrap.bundle.js"/>
         <asset:javascript  src="underscore.min.js"/>
         <asset:javascript src="utils.js"/>
-        <babel:webpack src="handledata.es6" />
+        <babel:webpack src="drawplots1.es6" />
         <asset:stylesheet src ="datatables.css" />
         <asset:javascript src="datatables.js" />
         <STYLE>
         div.drilldown { display: inline-block; }
+        #wrapper .text {
+            position:relative;
+            bottom:30px;
+            left:0px;
+            visibility:hidden;
+            font-size: small;
+        }
+
+        #wrapper:hover .text {
+            visibility:visible;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+        }
+
+        .grid line {
+            stroke: lightgrey;
+            stroke-opacity: 0.7;
+            shape-rendering: crispEdges;
+        }
+
+        .grid path {
+            stroke-width: 0;
+        }
+
         </STYLE>
+
 
 
 
@@ -31,21 +73,20 @@
             $(document).ready(function () {
 
 
-               // var test = ${raw(phewasdf_json)};
-               // console.log(test);
-
-                //var test2 = ${raw(dataRes)};
-                //console.log(test2);
 
                 handle_data(${raw(dataRes)});
 
                 $('#example').DataTable({
                     destroy: true,
-                    "order": [[ 2, "asc" ]]
+                    "order": [[ 3, "asc" ]]
                 });
                 $('#exclusion').DataTable({
                     destroy: true,
-                    "order": [[ 2, "asc" ]]
+                    "order": [[ 3, "asc" ]]
+                });
+
+                $('[data-toggle="popover"]').popover(  {
+                    html:true
                 });
 
 
@@ -53,7 +94,8 @@
 
 
 
-        });
+
+            });
 
 
 
@@ -81,7 +123,7 @@
 
 
 
-%{--                        <g:link  action="main" params="${[inputprscode:dataRes.PRS_code, inprsstudy:dataRes.PRS_study]}"><span class="glyphicon glyphicon-th-list"></span> Go Back</g:link>--}%
+%{-- <g:link  action="main" params="${[inputprscode:dataRes.PRS_code, inprsstudy:dataRes.PRS_study]}"><span class="glyphicon glyphicon-th-list"></span> Go Back</g:link>--}--}%
 
 
 
@@ -95,33 +137,59 @@
 
             <div class="container-fluid">
                 <div class="row">
+                     ${inputprscode}
 
-                        <table class="infotable">
-                            <tr><td colspan="2"><span class="contentTitle"> PRS for ${dispObj.descdata} from ${dispObj.phenomes} </span> </td></tr>
-                            <tr><td>PRSweb LD reference : ${dispObj.genld}</td><td>GWAS source : ${dispObj.source}</td><td>PRS method : ${dispObj.method}</td></tr>
+                    <table class="table table-light table-condensed" class="infotable">
                             <tr>
 
+                                <td colspan="2"><span class="contentTitle"> ${dispObj.phenomes} PRS for ${pheobj.phecodedesc}(${pheobj.phecodeid}) based on ${dispObj.source}  </span> </td>
+                            </tr>
+
+
+                            <tr >
                                 <g:if test="${dispObj.refdata.equals('UKB_GWAS') && dispObj.source.equals('PheWAS_Codes')}">
 
-                                    <td> GWAS reference : <a href ="https://www.ncbi.nlm.nih.gov/pubmed/?term=30107761" target="_blank"> ${dispObj.refdata}</a></td>
+                                    <td style="width:40%"> GWAS reference: <a href ="https://www.ncbi.nlm.nih.gov/pubmed/?term=30107761" target="_blank"> ${dispObj.refdata}</a></td>
                                 </g:if>
                                 <g:elseif test="${dispObj.refdata.equals('UKB_GWAS') && !(dispObj.source.equals('PheWAS_Codes'))}">
 
-                                    <td> GWAS reference : <a href="https://github.com/Nealelab/UK_Biobank_GWAS" target="_blank">!${dispObj.refdata}</a> </td>
+                                    <td style="width:30%"> GWAS reference: <a href="https://github.com/Nealelab/UK_Biobank_GWAS" target="_blank">!${dispObj.refdata}</a> </td>
                                 </g:elseif>
                                 <g:elseif test="${!(dispObj.refdata.equals('UKB_GWAS'))}">
 
-                                    <td> GWAS reference : <a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=${dispObj.refdata.replace(';',',')}" target="_blank">${dispObj.refdata}" </a></td>
+
+                                    <g:if test="${dispObj.refdata.size() > 30}">
+                                        <td style="width:30%" data-toggle="popover" data-content="${dispObj.refdata}" data-trigger="hover"> GWAS reference: <a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=${dispObj.refdata.replace(';',',')}" target="_blank">${dispObj.refdata.substring(0,dispObj.refdata.indexOf(';', 18))}....</a></td>
+                                    </g:if>
+                                    <g:else>
+                                        <td style="width:30%"> GWAS reference: <a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=${dispObj.refdata.replace(';',',')}" target="_blank">${dispObj.refdata}</a></td>
+                                    </g:else>
+
+
                                 </g:elseif>
+                                <td style="width:30%">GWAS source: ${dispObj.source}</td>
+                                <td style="width:30%">PRS method: ${dispObj.method}</td>
+                            </tr>
+                            <tr>
+                                <td>PRSweb LD reference: ${dispObj.genld}</td>
+                                <g:if test="${dispObj.descdata.size() > 60}">
+                                    <td data-toggle="popover" data-content="${dispObj.descdata}" data-trigger="hover">GWAS phenotype: ${dispObj.descdata.substring(0,60)}...</td>
+                                </g:if>
+                                <g:else>
+                                    <td>GWAS phenotype: ${dispObj.descdata}</td>
+                                </g:else>
+                                <td>PRSweb date: ${dispObj.datecreated}</td>
+                            </tr>
+                            <tr>
+                                <td>GWAS ID: ${dispObj.prefixdata}  </td>
+                                <td>GWAS URL: <a href="${dispObj.urldata}" target="_blank">${dispObj.urldata}</a> </td>
+                                <td>Genome build: GRCh37/hg19 </td>
+                            </tr>
 
-
-
-
-
-
-                                <td>GWAS phenotype :${dispObj.descdata}</td><td>PRSweb date : ${dispObj.datecreated}</td></tr>
-                            <tr><td>GWAS ID : ${dispObj.prefixdata}  </td> <td>GWAS URL : <a href="${dispObj.urldata}" target="_blank">${dispObj.urldata}</a> </td><td>Genome build	: GRCh37/hg19 </td></tr>
-                            <tr><td>PRS tuning parameter : ${dispObj.tunparam} </td><td>PRS evaluation in : ${dispObj.phenomes}</td></tr>
+                            <tr>
+                                <td>PRS tuning parameter: ${dispObj.tunparam} </td>
+                                <td>PRS evaluation in: ${dispObj.phenomes}</td>
+                            </tr>
 
 
                         </table>
@@ -130,10 +198,38 @@
 
 
 
-                <div class="row"><div class="col-12"><div id="phewas">Loading...</div></div></div>
+                <div class="row"><div class="col-12">
+                    <div id="wrapper">
+                        <div id="phewas">Loading...</div>
+                        <p class="text"><b>Figure 1: PheWAS results</b> P-values correspond to associations between the polygenic risk score (PRS) and the electronic health record-derived phenotype obtained using Firth’s logistic regression and also adjusting for age, gender, genotyping array, and the first four genotype principal components.<A href="#phewasdfinfo"><i class="fas fa-angle-double-down"></i></A></p>
+
+                    </div>
+
+
+
+                </div></div>
                 <div class="row">
-                    <div class="col-12 col-lg-9"><div id="phewas_ex">Loading...</div></div>
-                    <div class="col-12 col-lg-3"><div id="forest" class="forest_plot">Loading...</div></div>
+                    <div class="col-12 col-lg-9">
+                        <div id="wrapper">
+                            <div id="phewas_ex">Loading...</div>
+                            <p class="text">
+                                <b>Figure 2: Exclusion PheWAS results</b> Results from a PheWAS performed using only subjects who never had the primary cancer diagnosis. The results are obtained as in Figure 1 but using the reduced dataset.More Info scroll down <A href="#phewasdfinfo"><i class="fas fa-angle-double-down"></i></A></P>
+
+                        </p>
+                        </div>
+                        </div>
+                    <div class="col-12 col-lg-3">
+                        <div id="wrapper">
+                        <div id="forest" class="forest_plot">Loading...</div>
+                            <p class="text">
+                                <b>Figure 3: Associations between PRS and Selected Phenotype</b><br>
+                                This figure shows results for the selected phenotype in Figure 1.
+                                <A href="#forestinfo"><i class="fas fa-angle-double-down"></i></A>
+
+                            </p>
+                        </div>
+
+                    </div>
                 </div>
 
 
@@ -180,7 +276,7 @@
                                                     <tbody id="insertfirsttable">
                                                     <g:each var="prop" in="${prsobjlist}" index="i">
                                                         <tr>
-                                                            <td>${prop.getCode()}</td>
+                                                            <td><a class="intro" href="${createLink(controller:'phecodeData',action:'showPhecodeInfoTable')}?phecode=${prop.getCode()}" target="_blank">${prop.getCode()}</a></td></td>
                                                             <td>${prop.getPstring()}</td>
                                                             <td>${prop.getCategory()}</td>
                                                             <td>${prop.getPrsp()}</td>
@@ -206,7 +302,7 @@
                                                 <th>P value</th>
                                                 <th>BETA</th>
                                                 <th>SEBETA</th>
-                                                <th># Cases</th>
+                                                 <th># Cases</th>
                                                 <th># Controls</th>
                                                 <th>Sex</th>
                                             </tr>
@@ -214,8 +310,9 @@
                                             <tbody id="insertfirsttable1">
                                             <g:each var="prop" in="${prsexobjlist}" index="i">
                                                 <tr>
-                                                    <td>${prop.getCode()}</td>
-                                                    <td>${prop.getPstring()}</td>
+
+                                                    <td><a class="intro" href="${createLink(controller:'phecodeData',action:'showPhecodeInfoTable')}?phecode=${prop.getCode()}" target="_blank">${prop.getCode()}</a></td></td>
+                                                   <td>${prop.getPstring()}</td>
                                                     <td>${prop.getCategory()}</td>
                                                     <td>${prop.getPrsp()}</td>
                                                     <td>${prop.getCbeta()}</td>
@@ -252,30 +349,26 @@
                 <div class="row my-2"><div class="col-12">
                     <div class="card"><div class="card-body">
                         <h3>LEGENDS</h3>
-                        <p><b>Figure 1: PheWAS results</b><br>
+                        <p></p><A name="phewasinfo"><b>Figure 1: PheWAS results</b><br>
                             P-values correspond to associations between the polygenic risk score (PRS) and the electronic health record-derived phenotype obtained using Firth’s logistic regression and also adjusting for age, gender, genotyping array, and the first four genotype principal components.<br>
                             Upward (downward)-pointing triangles indicate a positive (negative) association.<br>
                             Additional details are available by hovering the cursor over a particular triangle and by clicking the triangle. The horizontal dashed line indicates phenome-wide significance. Results are color-coded by disease category.</p>
-                        <p><b>Figure 2: Exclusion PheWAS results</b><br>
-                            Results from a PheWAS performed using only subjects who never had a skin cancer diagnosis. The results are obtained as in Figure 1 but using the reduced dataset.</p>
-                        <p class="mb-0"><b>Figure 3: Associations between PRS and Selected Phenotype</b><br>
+                    </A>
+                        <p><A name="phewasdfinfo"><b>Figure 2: Exclusion PheWAS results </b><br>
+                            Results from a PheWAS performed using only subjects who never had the primary cancer diagnosis. The results are obtained as in Figure 1 but using the reduced dataset.
+
+                            </A>
+                        <p class="mb-0"><b><A name="forestinfo">Figure 3: Associations between PRS and Selected Phenotype</b><br>
                             This figure shows results for the selected phenotype in Figure 1.<br>
                             This figure provides the beta estimate for the adjusted association between the PRS and the selected phenotype from Firth-corrected logistic regression. The corresponding confidence intervals are also shown. Results are presented for models using either a continuous or a categorical version of the PRS.<br>
                             Q1 through Q4 represent the four quartiles of the PRS.</p>
+                    </A>
                     </div></div>
                 </div></div>
 
 
 
-                <div class="row my-2"><div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                        <div class="row">
-                            <div class="col-12 col-md-10">
-                             <p>University of Michigan Center for Precision Health Data Science</p>
-                         </div></div>
-                </div></div>
-            </div>
+
 
 
 

@@ -245,11 +245,25 @@ const make_scatter_plot = (df, title, color_by_category, y_axis_max, div_id) => 
         //responsize_resize: true, // what's this do?
         mouse_guide: false,
         panels: [phewas_panel],
+        dashboard: {
+            components: [
+                    {
+                    type: "download",
+                    color: "grey",
+                    position: "right"
+                    },
+                    {
+                        type: "title",
+                        title: title,
+                        position: "left"
+                    }
+                ]
+        }
     };
 
     const data_sources = new LocusZoom.DataSources().add('phewas', ['StaticJSON', scatter_data]);
     const plot = LocusZoom.populate(`#${div_id}`, data_sources, layout);
-    plot.panels['panel-0'].setTitle(title);
+    //plot.panels['panel-0'].setTitle(title);
 
     _d.plots[div_id] = _d.plots[div_id] || {};
     _d.plots[div_id].plot = plot;
@@ -274,10 +288,13 @@ const make_forest_plot_for_id = (df, pheno_id) => {
 
         };
     });
+    console.log(forest_data);
     make_forest_plot(forest_data, `Figure 3: ${df.string[pheno_id]}`, 'forest');
 };
 const make_forest_plot = (forest_data, title, div_id) => {
     _d.forest_data = forest_data;
+
+    console.log(forest_data);
 
     const or_ci_extent = d3.extent(_.flatten(Object.keys(forest_data).map(comp => forest_data[comp].or_ci)).concat([1]));
 
@@ -299,6 +316,7 @@ const make_forest_plot = (forest_data, title, div_id) => {
     const plot_margin = {left: 65, top: 10, right: 45, bottom: 100};
     const plot_height = svg_height - plot_margin.top - plot_margin.bottom;
     const plot_width = svg_width - plot_margin.left - plot_margin.right;
+    const plot_width2 =plot_width-70
     const forest_plot = forest_svg.append('g')
           .attr('transform', `translate(${plot_margin.left},${plot_margin.top})`);
     ///forest_plot.append('rect').attr('width',plot_width).attr('height',plot_height).style('fill', '#eee');
@@ -319,7 +337,10 @@ const make_forest_plot = (forest_data, title, div_id) => {
             .attr('y', y_scale(forest_data[comp].or)-5)
             .attr('width', 10)
             .attr('height', 10)
-            .attr('stroke-width', 0);
+            .attr('stroke-width', 1)
+            .attr("stroke", "#000");
+
+
 
 
         forest_plot.append('rect')
@@ -327,7 +348,8 @@ const make_forest_plot = (forest_data, title, div_id) => {
             .attr('width', 4)
             .attr('height', y_scale(forest_data[comp].or_ci[0]) - y_scale(forest_data[comp].or_ci[1]))
             .attr('y', y_scale(forest_data[comp].or_ci[1]))
-            .attr('stroke-width', 0);
+            .attr('stroke-width', 1)
+
 
         forest_svg.append('g')
             .attr('transform', `translate(${plot_margin.left + plot_x_offset + 8},${plot_margin.top + plot_height + 5})`)
@@ -335,23 +357,37 @@ const make_forest_plot = (forest_data, title, div_id) => {
             .attr('transform', 'rotate(45 -10 10)')
             .style('text-anchor','start')
             .text(text)
+            .attr("stroke", "#000")
+            .attr('font-size','12px')
+            .attr("fill","red")
+            .attr("stroke-width", 1);
+
+
     });
 
     const y_axis = d3.svg.axis()
         .scale(y_scale)
         .orient('left')
         .innerTickSize(-plot_width)
-        .outerTickSize(0)
+        .outerTickSize(1)
         .tickPadding(7)
         .ticks(5);
+
     forest_plot.append('g')
-        .attr('class', 'x axis')
+        .classed('y', true)
+        .classed('grid', true)
         .call(y_axis);
+
+
+
+
 
     forest_svg.append('g')
         .attr('transform', `translate(18,${plot_margin.top + plot_height/2})`)
         .append('text')
         .attr('transform', 'rotate(-90)')
+        .attr('stroke','black')
+        .attr('font-size','12px')
         .style('text-anchor','middle')
         .text('Odds Ratio (95% CI)')
 

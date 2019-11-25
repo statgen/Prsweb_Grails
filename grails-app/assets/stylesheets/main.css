@@ -729,6 +729,28 @@ a.skip {
     padding-left: 20px;
 }
 
+div.methoda {
+    text-indent: 50px;
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+
+.axisRed line{
+    stroke: red;
+}
+
+.axisRed path{
+    stroke: red;
+}
+
+.axisRed text{
+    fill: red;
+}
+
 
 
 

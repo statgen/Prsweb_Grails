@@ -60,7 +60,7 @@ class PhecodeDataController {
 
     def showPhecodeInfo()
     {
-println(params)
+        println(params)
 
         def fil = params.fil.toString()
         def searchterm = params.q?.toString()
@@ -94,7 +94,7 @@ println(params)
 
 
         }
-println(phecodedata.phecodeid)
+//println(phecodedata.phecodeid)
             println("***************")
         //println(Phecode.findAllByPhecodeid2008))
         println("***************")
@@ -103,10 +103,56 @@ println(phecodedata.phecodeid)
         def phecoreres = phecodedata.collect {
             en -> return[phecodeid : en.phecodeid,pdesc:Phecode.findAllByPhecodeid2(en.phecodeid).phecodedesc[0],icdcode:en.icdcode,prange:en.phecoderange,icddesc:en.icddesc,icdtype:en.icdtype,sex:en.sex,pcategory:en.pcategory,phenome:en.phenome]
         }
-        println(phecoreres)
+        //println(phecoreres)
 
 
   [phecoreres:phecoreres, fil: fil]
+
+
+
+    }
+
+    def showPhecodeInfoTable()
+    {
+        println(params)
+        def fil = params.fil.toString()
+        def searchterm = params.q?.toString()
+        println(searchterm)
+
+
+        def pinfo = PhecodeData.createCriteria()
+        def phecodedata
+
+
+
+
+           // def pdesc = searchterm.substring(searchterm.indexOf(":")+1,searchterm.length())
+
+            def phecodedesc = Phecode.findAllByPhecodeid(params.phecode)
+
+            println(phecodedesc.phecodeid2.toString())
+
+            // println(phecode)
+            phecodedata = pinfo.list {
+                eq ("phecodeid", phecodedesc.phecodeid2[0].toString())
+                order("icddesc", "asc")
+            }
+
+
+
+//println(phecodedata.phecodeid)
+        println("***************")
+        //println(Phecode.findAllByPhecodeid2008))
+        println("***************")
+
+
+        def phecoreres = phecodedata.collect {
+            en -> return[phecodeid : en.phecodeid,pdesc:Phecode.findAllByPhecodeid2(en.phecodeid).phecodedesc[0],icdcode:en.icdcode,prange:en.phecoderange,icddesc:en.icddesc,icdtype:en.icdtype,sex:en.sex,pcategory:en.pcategory,phenome:en.phenome]
+        }
+        //println(phecoreres)
+
+
+        [phecoreres:phecoreres, fil: fil]
 
 
 

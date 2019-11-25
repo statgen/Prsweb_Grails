@@ -51,8 +51,17 @@ class DisplayData {
     String toporci15
     String toporci25
 
+    String topor10
+    String toporci110
+    String toporci210
+    String topor25
+    String toporci125
+    String toporci225
+
     String tunparam
     String genomebuild
+
+    String gwassource //used to display the model first column into the main table
 
 
 
