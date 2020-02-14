@@ -112,6 +112,8 @@ environments:
                 dbCreate: update
                 url: "jdbc:mysql://localhost:3306/prsweb"
 
+
+
     test:
             dataSource:
                 dbCreate: update
@@ -138,4 +140,6 @@ environments:
                      testOnReturn: false
                      jdbcInterceptors: ConnectionState
                      defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+
+
 

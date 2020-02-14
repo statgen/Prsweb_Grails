@@ -352,7 +352,7 @@ const make_forest_plot = (forest_data, title, div_id) => {
 
 
         forest_svg.append('g')
-            .attr('transform', `translate(${plot_margin.left + plot_x_offset + 8},${plot_margin.top + plot_height + 5})`)
+            .attr('transform', `translate(${plot_margin.left + plot_x_offset + 8},${plot_margin.top + plot_height + 15})`)
             .append('text')
             .attr('transform', 'rotate(45 -10 10)')
             .style('text-anchor','start')

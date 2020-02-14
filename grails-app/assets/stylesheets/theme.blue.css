@@ -20,7 +20,7 @@
 /* header */
 .tablesorter-blue th,
 .tablesorter-blue thead td {
-	font: 12px/18px Arial, Sans-serif;
+	font: 10px Arial, Sans-serif;
 	font-weight: bold;
 	color: #000;
 
@@ -57,6 +57,8 @@
 	/* background-image: url(images/black-unsorted.gif); */
 	background-repeat: no-repeat;
 	background-position: center right;
+	font-size: 13px;
+	font-weight:bold;
 	padding: 4px 18px 4px 4px;
 	white-space: normal;
 	cursor: pointer;

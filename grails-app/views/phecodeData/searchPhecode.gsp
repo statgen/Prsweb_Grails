@@ -12,6 +12,12 @@
         <g:set var="entityName" value="${message(code: 'phecodeData.label', default: 'PhecodeData')}" />
         <title><g:message code="default.show.label" args="[entityName]" /></title>
         <style>
+        .row {
+            position: relative;
+            /* max-width: 1400px; */
+            margin: 0 auto;
+            padding: 0 5%;
+        }
         * {
             -webkit-border-radius: 1px !important;
             -moz-border-radius: 1px !important;
@@ -68,6 +74,7 @@
             -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 1px rgba(0, 109, 0, 0.8);
             box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 1px rgba(0, 109, 0, 0.8);
         }
+
         </style>
         <script>
         $(document).ready(function() {
@@ -88,6 +95,14 @@
 
 			          });
 				  }
+
+                else if(id == "phecodename")
+                {
+                    $('#city').autocomplete({
+                        source: '<g:createLink controller="phecodeData" action="ajaxFindCity" params="[radio:'phecodename']"/>'
+
+                    });
+                }
 			  else
                   {
                       console.log("phecode loop");
@@ -123,7 +138,7 @@
 
 
                             <g:form action="showPhecodeInfo" method="post" id="upform" name="upform" enctype="multipart/form-data">
-                    Search By :  <g:radioGroup name="fil" id="radio" values="['icd','phecode']"  value="phecode" labels="[' ICD ','  Phecode ']" onClick="doExport()">${it.radio} <g:message code="${it.label}" />
+                    Search By :  <g:radioGroup name="fil" id="radio" values="['icd','phecode','phecodename']"  value="phecode" labels="[' ICD ','  Phecode ',' Phecode Name']" onClick="doExport()">${it.radio} <g:message code="${it.label}" />
                 </g:radioGroup></span>
                 <div class="form-group mt-2" >
                     %{--<label for="formGroupExampleInput">Example label</label>--}%

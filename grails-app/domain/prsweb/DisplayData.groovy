@@ -61,7 +61,8 @@ class DisplayData {
     String tunparam
     String genomebuild
 
-    String gwassource //used to display the model first column into the main table
+    String gwassource
+    String uploadtoprsweb//used to display the model first column into the main table
 
 
 

@@ -30,8 +30,8 @@ LocusZoom.TransformationFunctions.set('2sigfigs', (x) => x.toPrecision(2));
 
 
 const handle_data = data => {
-    console.log("inside handle data");
-    console.log(data);
+    //console.log("inside handle data");
+    //console.log(data);
     document_ready().then(() => {
         _d.data = data;
         data.PRS_code_string = data.PRS_code_strings[data.PRS_code];
@@ -39,7 +39,7 @@ const handle_data = data => {
         make_drilldown(data);
         make_plots(data);
         if (data.weights37_fname) { add_weights_button(data.weights37_fname, 'GRCh37'); }
-        if (data.weights38_fname) { add_weights_button(data.weights38_fname, 'GRCh38'); }
+
     });
 }
 
@@ -78,31 +78,108 @@ const make_plots = data => {
         d3.max(data.phewas_ex_df.comparisons['continuous'].logp) * 1.15
     );
     const phewas_plot = make_scatter_plot(data.phewas_df,
-                                        `Figure 1: ${data.PRS_code_string} PRS (${data.PRS_code})`,
-                                        data.color_by_category,
-                                        y_axis_max,
-                                        'phewas');
+        `Figure 1: ${data.PRS_code_string} PRS (${data.PRS_code})`,
+        data.color_by_category,
+        y_axis_max,
+        'phewas');
     phewas_plot.on("element_clicked", function(elem) {
         const id = elem.data['phewas:id'];
-        make_forest_plot_for_id(data.phewas_df, id);
+        console.log("onclicked event");
+
+        console.log(data.phewas_df.code[id]);
+
+        var pid= data.phewas_df.code[id];
+        var expid ;
+
+        var flagex= "false";
+
+        for (var i=0 ; i < data.phewas_ex_df.code.length ; i++)
+        {
+
+
+            if(data.phewas_ex_df.code[i] == pid)
+            {
+                expid = i ;
+                console.log("expid",expid, "i is ",i);
+                flagex = "true";
+
+
+            }
+
+        }
+
+        if( flagex == "false")
+        {
+
+            console.log("phecode doesnt exists");
+        }
+
+
+        console.log("later expid",expid);
+        console.log("later id",id);
+
+
+
+        make_forest_plot_for_id2(data.phewas_df,data.phewas_ex_df, id,expid);
     });
+
     const phewas_ex_plot = make_scatter_plot(data.phewas_ex_df,
-                                           `Figure 2: ${data.PRS_code_string} PRS (${data.PRS_code}) (exclusion)`,
-                                           data.color_by_category,
-                                           y_axis_max,
-                                           'phewas_ex');
+        `Figure 2: ${data.PRS_code_string} PRS (${data.PRS_code}) (exclusion)`,
+        data.color_by_category,
+        y_axis_max,
+        'phewas_ex');
 
     let pheno_id_with_strongest_pval = _.max(
         _.range(_d.data.phewas_df.comparisons.continuous.logp.length),
         id=>_d.data.phewas_df.comparisons.continuous.logp[id]);
-    make_forest_plot_for_id(data.phewas_df, pheno_id_with_strongest_pval);
+
+
+
+    //make_forest_plot_for_id(data.phewas_df, pheno_id_with_strongest_pval);
+    console.log("index"+pheno_id_with_strongest_pval);
+
+    var pid= data.phewas_df.code[pheno_id_with_strongest_pval];
+    console.log("phecode is ",pid);
+    var expid ;
+
+    var flagex= "false";
+    console.log(pid);
+
+    for (var i=0 ; i < data.phewas_ex_df.code.length ; i++)
+    {
+        var test = data.phewas_ex_df.code[i];
+        //console.log("data",test);
+
+        if(data.phewas_ex_df.code[i] == pid)
+        {
+            expid =i;
+            flagex = "true";
+            //console.log(i)
+
+        }
+
+    }
+
+    if( flagex == "false")
+    {
+
+        console.log("phecode doesnt exists");
+    }
+
+
+    console.log("expid" , expid);
+
+
+    console.log("calaling the make forest data");
+
+    make_forest_plot_for_id2(data.phewas_df,data.phewas_ex_df,pheno_id_with_strongest_pval,expid);
 };
 
 
 const make_scatter_plot = (df, title, color_by_category, y_axis_max, div_id) => {
     _d.plots = _d.plots || {};
-	console.log("inside the make scatterplot");
-	//console.log(df);
+    //console.log("inside the make scatterplot");
+    //console.log(df);
     let y_scale;
     let y_ticks = [];
     if (y_axis_max < 20) { y_axis_max = 20; }
@@ -178,7 +255,7 @@ const make_scatter_plot = (df, title, color_by_category, y_axis_max, div_id) => 
         ci2:       df.comparisons['continuous'].ci2.map(x => x.toPrecision(3)),
         oddsratio: df.comparisons['continuous'].or,
     };
-    console.log("logp value");
+    //console.log("logp value");
     //console.log(scatter_data);
     _d.plots[div_id] = {scatter_data: scatter_data};
 
@@ -245,11 +322,25 @@ const make_scatter_plot = (df, title, color_by_category, y_axis_max, div_id) => 
         //responsize_resize: true, // what's this do?
         mouse_guide: false,
         panels: [phewas_panel],
+        dashboard: {
+            components: [
+                {
+                    type: "download",
+                    color: "grey",
+                    position: "right"
+                },
+                {
+                    type: "title",
+                    title: title,
+                    position: "left"
+                }
+            ]
+        }
     };
 
     const data_sources = new LocusZoom.DataSources().add('phewas', ['StaticJSON', scatter_data]);
     const plot = LocusZoom.populate(`#${div_id}`, data_sources, layout);
-    plot.panels['panel-0'].setTitle(title);
+    //plot.panels['panel-0'].setTitle(title);
 
     _d.plots[div_id] = _d.plots[div_id] || {};
     _d.plots[div_id].plot = plot;
@@ -274,82 +365,354 @@ const make_forest_plot_for_id = (df, pheno_id) => {
 
         };
     });
+    console.log(forest_data);
     make_forest_plot(forest_data, `Figure 3: ${df.string[pheno_id]}`, 'forest');
 };
+
+const make_forest_plot_for_id2 = (df,dfex, pheno_id,expheno_id) => {
+
+    console.log("init in 2");
+   console.log(expheno_id)
+    const forest_data = {};
+    Object.keys(df.comparisons).forEach((comp) => {
+        forest_data[comp] = {
+            or: df.comparisons[comp].or[pheno_id],
+            or_ci: [
+                df.comparisons[comp].ci1[pheno_id],
+                df.comparisons[comp].ci2[pheno_id],
+            ],
+            // log_pvalue: df.comparisons[comp].logp[pheno_id],
+            // beta: df.comparisons[comp].beta[pheno_id],
+            // sebeta: df.comparisons[comp].sebeta[pheno_id],
+
+        };
+    });
+
+
+
+    Object.keys(dfex.comparisons).forEach((comp) => {
+
+        console.log(dfex.comparisons[comp].or[expheno_id]);
+        forest_data['ex'+comp] = {
+            or: dfex.comparisons[comp].or[expheno_id],
+            or_ci: [
+                dfex.comparisons[comp].ci1[expheno_id],
+                dfex.comparisons[comp].ci2[expheno_id],
+            ],
+            // log_pvalue: df.comparisons[comp].logp[pheno_id],
+            // beta: df.comparisons[comp].beta[pheno_id],
+            // sebeta: df.comparisons[comp].sebeta[pheno_id],
+
+        };
+    });
+
+
+   // console.log("aaaaaaaaaaaaaaaaaaaaa")
+    console.log(forest_data);
+
+    console.log("going towards forest data")
+    make_forest_plot(forest_data, `Figure 3: ${df.string[pheno_id]}`, 'forest2');
+};
+
+
 const make_forest_plot = (forest_data, title, div_id) => {
+
+   // console.log("1");
     _d.forest_data = forest_data;
 
+
+   console.log(forest_data);
+
+   // console.log(or_ci_extent);
     const or_ci_extent = d3.extent(_.flatten(Object.keys(forest_data).map(comp => forest_data[comp].or_ci)).concat([1]));
+
+   // console.log("or_ci_extent");
+
+    //console.log(or_ci_extent);
 
     // TODO: use a dynamic width and height (with minimums)
     const forest_div = d3.select('#'+div_id);
+    //console.log("2");
     forest_div.html(''); // empty it out.
 
-    forest_div.append('p').attr('class', 'mb-0').style('font-weight', 'bold').text(title);
+    forest_div.append('p').attr('class', 'mb-0').attr('class', 'mt-1').style('font-weight', 'bold').style('font-size', '18px').text(title);
+    var sline= ' <i class=\"fa fa-square\" style=\"color:steelblue\"></i> PRS Phewas  <i class=\"fa fa-square\" style=\"color:red\"><!-- icon --></i>  Exclusion PRS Phewas';
+    forest_div.append('h2').attr('class', 'mb-0').attr('class', 'mt-1').attr('class','text-center').style('font-size', '12px').html(sline);
 
-    const svg_width = 200;
+    const svg_width = 500;
     const svg_height = 300;
     const forest_svg = forest_div.append('svg')
         .attr('width', `${svg_width}px`)
         //.attr('width', '100%')
         .attr('height', `${svg_height}px`);
-    //forest_svg.style('background-color', '#eee')
 
-    const plot_margin = {left: 65, top: 10, right: 5, bottom: 100};
+    forest_svg.style('background-color', 'white');
+    //console.log("3");
+
+    const plot_margin = {left: 65, top: 10, right: 45, bottom: 80};
     const plot_height = svg_height - plot_margin.top - plot_margin.bottom;
     const plot_width = svg_width - plot_margin.left - plot_margin.right;
+    const plot_width2 =plot_width-70
     const forest_plot = forest_svg.append('g')
-          .attr('transform', `translate(${plot_margin.left},${plot_margin.top})`);
+        .attr('transform', `translate(${plot_margin.left},${plot_margin.top})`);
     ///forest_plot.append('rect').attr('width',plot_width).attr('height',plot_height).style('fill', '#eee');
 
     const y_scale = d3.scale.linear()
-          .domain([
-              or_ci_extent[0] - 0.07*(or_ci_extent[1]-or_ci_extent[0]), // upper/lower margins
-              or_ci_extent[1] + 0.07*(or_ci_extent[1]-or_ci_extent[0]),
-          ])
-          .range([plot_height, 0]);
+        .domain([
+            or_ci_extent[0] - 0.07*(or_ci_extent[1]-or_ci_extent[0]), // upper/lower margins
+            or_ci_extent[1] + 0.07*(or_ci_extent[1]-or_ci_extent[0]),
+        ])
+        .range([plot_height, 0]);
 
-    ['continuous', 'Q1Q2', 'Q1Q3', 'Q1Q4'].forEach((comp, i) => {
-        const text = {Q1Q2: 'Q1 vs Q2', Q1Q3: 'Q1 vs Q3', Q1Q4: 'Q1 vs Q4', continuous: 'continuous'}[comp];
-        const plot_x_offset = plot_width * (comp=='excontinuous'? 0.8/5.7 : (i+2.1)/5.7);
+    //console.log("4");
 
-        forest_plot.append('rect')
-            .attr('x', plot_x_offset-5)
-            .attr('y', y_scale(forest_data[comp].or)-5)
-            .attr('width', 10)
-            .attr('height', 10)
-            .attr('stroke-width', 0);
+    var forest_data_mod = [];
 
-        forest_plot.append('rect')
-            .attr('x', plot_x_offset-2)
-            .attr('width', 4)
-            .attr('height', y_scale(forest_data[comp].or_ci[0]) - y_scale(forest_data[comp].or_ci[1]))
-            .attr('y', y_scale(forest_data[comp].or_ci[1]))
-            .attr('stroke-width', 0);
+    Object.keys(forest_data).forEach((comp) => {
 
-        forest_svg.append('g')
-            .attr('transform', `translate(${plot_margin.left + plot_x_offset + 8},${plot_margin.top + plot_height + 1})`)
-            .append('text')
-            .attr('transform', 'rotate(-65)')
-            .style('text-anchor','end')
-            .text(text)
+        //console.log(forest_data[comp].or ==null);
+        if(forest_data[comp].or != null){
+            forest_data_mod.push(comp);
+           // console.log(comp);
+
+        }
+
+
+
     });
 
+
+
+
+    [['continuous','excontinuous'],['Q1Q2','exQ1Q2'],['Q1Q3','exQ1Q3'],['Q1Q4','exQ1Q4']].forEach((comparisons, i,all_comparisons) => {
+
+        const x_offset =  plot_width * (i + 0.5) / all_comparisons.length;
+
+    });
+
+
+
+
+
+
+   ['continuous','excontinuous','Q1Q2','exQ1Q2','Q1Q3','exQ1Q3','Q1Q4','exQ1Q4'].forEach((comp, i) => {
+       // const text = {excontinuous: 'ex continuous', continuous: 'continuous',exQ1Q2: 'Ex Q1 vs Q2', exQ1Q3: ' ex Q1 vs Q3', exQ1Q4: 'ex Q1 vs Q4',Q1Q2: 'Q1 vs Q2', Q1Q3: 'Q1 vs Q3', Q1Q4: 'Q1 vs Q4'}[comp];
+
+        const text = {continuous: '  Continuous', Q1Q2: ' Q1 vs Q2', Q1Q3: ' Q1 vs Q3', Q1Q4: 'Q1 vs Q4'}[comp];
+       // console.log(i);
+       // console.log("comp"+comp);
+      // console.log("plot_width "+plot_width);
+        var  plot_x_offset=0;
+
+       if(comp == 'excontinuous' || comp =='continuous')
+       {
+           if(comp == 'continuous')
+           {
+               plot_x_offset = plot_width * 0.6 *  (1/7.7);
+           }
+           else {
+               plot_x_offset = plot_width * 0.9 *  (1.4/7.7);
+           }
+       }
+       else
+       {
+           plot_x_offset =  plot_width * 0.9 * (i+1.1)/7.7;
+       }
+
+
+       // console.log(plot_x_offset);
+        const square_side_length = 10;
+
+
+        if(comp == 'continuous' || comp == 'Q1Q2' || comp == 'Q1Q3' ||comp == 'Q1Q4'   )
+        {
+
+
+            if(forest_data_mod.includes(comp))
+            {
+                forest_plot.append('rect')
+                    .attr('x', plot_x_offset - square_side_length/2)
+                    .attr('y', y_scale(forest_data[comp].or) - square_side_length/2)
+                    .attr('width', square_side_length)
+                    .attr('height', square_side_length)
+                    .attr('stroke-width', 0)
+                    .attr('fill', "steelblue");
+
+
+
+
+                forest_plot.append('rect')
+                    .attr('x', plot_x_offset-1.5)
+                    .attr('width', 2)
+                    .attr('height', y_scale(forest_data[comp].or_ci[0]) - y_scale(forest_data[comp].or_ci[1]))
+                    .attr('y', y_scale(forest_data[comp].or_ci[1]))
+                    .attr('stroke-width', 1)
+                    .attr('fill', "steelblue");
+            }
+
+            forest_svg.append('g')
+                .attr('transform', `translate(${ plot_x_offset + 60},${plot_margin.top + plot_height + 25})`)
+                .append('text')
+                .style('text-anchor','start')
+                .text(text)
+                .attr("stroke", "#000")
+                .attr('font-size','14px')
+                .attr("fill","red")
+                .attr("stroke-width", 1);
+
+
+
+
+        }
+        else {
+            if (forest_data_mod.includes(comp)) {
+                forest_plot.append('rect')
+                    .attr('x', plot_x_offset - square_side_length/2)
+                    .attr('y', y_scale(forest_data[comp].or) - square_side_length/2)
+                    .attr('width', square_side_length)
+                    .attr('height', square_side_length)
+                    .attr('stroke-width', 0)
+                    .attr('fill', "red")
+                    .attr("stroke", "red");
+
+                forest_plot.append('rect')
+                    .attr('x', plot_x_offset - 1.5)
+                    .attr('width', 2)
+                    .attr('height', y_scale(forest_data[comp].or_ci[0]) - y_scale(forest_data[comp].or_ci[1]))
+                    .attr('y', y_scale(forest_data[comp].or_ci[1]))
+                    .attr('stroke-width', 1)
+                    .attr('fill', "red");
+
+
+                console.log("just before the line"+plot_x_offset);
+                if(comp == 'excontinuous')
+                {
+                    var verticalLine = forest_plot.append('line')
+                    // .attr('transform', 'translate(100, 50)')
+                        .attr({
+                            'x1': plot_x_offset + 50,
+                            'y1': 10,
+                            'x2': plot_x_offset + 50,
+                            'y2': 200
+                        })
+                        .attr("stroke", "black")
+                        .attr('class', 'verticalLine');
+
+
+                }
+                else {
+                    var verticalLine = forest_plot.append('line')
+                    // .attr('transform', 'translate(100, 50)')
+                        .attr({
+                            'x1': plot_x_offset + 30,
+                            'y1': 10,
+                            'x2': plot_x_offset + 30,
+                            'y2': 200
+                        })
+                        .attr("stroke", "black")
+                        .attr('class', 'verticalLine');
+                }
+
+
+
+
+
+
+                //console.log("done with line");
+
+
+            }
+            else {
+
+                if(comp == 'excontinuous')
+                {
+                    var verticalLine = forest_plot.append('line')
+                    // .attr('transform', 'translate(100, 50)')
+                        .attr({
+                            'x1': plot_x_offset + 50,
+                            'y1': 10,
+                            'x2': plot_x_offset + 50,
+                            'y2': 200
+                        })
+                        .attr("stroke", "black")
+                        .attr('class', 'verticalLine');
+
+
+                }
+                else {
+
+                    var verticalLine = forest_plot.append('line')
+                    // .attr('transform', 'translate(100, 50)')
+                        .attr({
+                            'x1': plot_x_offset + 30,
+                            'y1': 10,
+                            'x2': plot_x_offset + 30,
+                            'y2': 200
+                        })
+                        .attr("stroke", "black")
+                        .attr('class', 'verticalLine');
+
+
+
+
+                }
+
+
+
+
+
+
+
+
+            }
+        }
+
+
+
+
+
+
+        //console.log("going for line");
+        //console.log(plot_x_offset);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    });
+    //console.log("5");
     const y_axis = d3.svg.axis()
         .scale(y_scale)
         .orient('left')
         .innerTickSize(-plot_width)
-        .outerTickSize(0)
-        .tickPadding(7)
+        .outerTickSize(1)
+        .tickPadding(10)
         .ticks(5);
+
+    //console.log("6");
     forest_plot.append('g')
-        .attr('class', 'x axis')
+        .classed('y', true)
+        .classed('grid', true)
         .call(y_axis);
 
+
+
+
+
     forest_svg.append('g')
-        .attr('transform', `translate(18,${plot_margin.top + plot_height/2})`)
+        .attr('transform', `translate(25,${plot_margin.top + plot_height/2})`)
         .append('text')
         .attr('transform', 'rotate(-90)')
+        .attr('stroke','black')
+        .attr('font-size','12px')
         .style('text-anchor','middle')
         .text('Odds Ratio (95% CI)')
 

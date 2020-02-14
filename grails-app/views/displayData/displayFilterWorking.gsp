@@ -14,27 +14,16 @@
 
         gtag('config', 'UA-143045158-2');
     </script>
-    <asset:javascript src="jquery-3.3.1.js"/>
-
-
-
-    <asset:stylesheet href="locuszoom.css"/>
 
 
     <meta name="layout" content="main"/>
-
+    <asset:javascript src="jquery-3.3.1.js"/>
     <asset:stylesheet src="theme.blue.css"/>
     <asset:javascript src="jquery.tablesorter.js"/>
     <asset:javascript src="jquery.tablesorter.widgets.js"/>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js"></script>
     <asset:javascript src="widget-filter-formatter-select2.js"/>
-
-
-
-
+    <asset:javascript src="select2.min.js"/>    >
+    <asset:stylesheet src="select2.css" />
 
 
     <g:set var="entityName" value="${message(code: 'displayData.label', default: 'DisplayData')}"/>
@@ -86,58 +75,59 @@
 
 
         $(function () {
-
-
-
-
-
             $("#select_desc").select2({ theme: "classic" });
             $("#select_phenomes").select2({theme: "classic",minimumResultsForSearch: -1});
             $("#select_odds").select2({theme: "classic",minimumResultsForSearch: -1});
             $('[data-toggle="popover"]').popover(  { html:true  });
-
-            var $tblSorter=$('.tablesorter').tablesorter({
+            var $options = $('[id^="option"]');
+            $('.tablesorter').tablesorter({
                 theme: 'blue',
                 widthFixed: true,
                 sortList: [[5,1]],
-                widgets: ['zebra', 'filter'],
-                 widgetOptions: {
+                widgets: ['zebra', 'stickyHeaders', 'filter'],
+                widgetOptions : {
+                    // Use the $.tablesorter.storage utility to save the most recent filters
+                    scroller_fixedColumns: 2,
+                    scroller_addFixedOverlay: true,
+                    scroller_rowHighlight: 'hover',
+                    scroller_barWidth: null,
 
-             filter_saveFilters : true,
-      // jQuery selector string of an element used to reset the filters
-      filter_reset : 'button.reset',
-      // add custom selector elements to the filter row
+                    filter_saveFilters : true,
+                    // jQuery selector string of an element used to reset the filters
+                    filter_reset : 'button.reset',
+                    // add custom selector elements to the filter row
+                    filter_formatter : {
 
-        filter_formatter : {
+                        // Alphanumeric (match)
 
-        // Alphanumeric (match)
-        2 : function($cell, indx) {
-          return $.tablesorter.filterFormatter.select2( $cell, indx, {
-            match : true,         // adds "filter-match" to header
-            cellText : 'Match: ', // Cell text
-            width: '85%',         // adjusted width to allow for cell text
-            value: ['Lassosum', 'P&G'] // initial values
-          });
-        }
 
-        // Alphanumeric (exact)
+                        // Alphanumeric (exact)
+                        1 : function($cell, indx) {
+                            return $.tablesorter.filterFormatter.select2( $cell, indx, {
+                                match : false // exact match only
+                            });
+                        },
+                        2 : function($cell, indx) {
+                            return $.tablesorter.filterFormatter.select2( $cell, indx, {
+                                match : true,         // adds "filter-match" to header
+                                cellText : 'Match: ', // Cell text
+                                width: '85%',         // adjusted width to allow for cell text
+                                value: ['Lassosum','P&T','P&G'] // initial values
+                            });
+                        }
+                    },
 
-      },
-
-      // option added in v2.16.0
-      filter_selectSource : {
-        // Alphanumeric match (prefix only)
-        // added as select2 options (you could also use select2 data option)
-        2 : function(table, column) {
-          return ['Lassosum', 'P&G'];
-        }
-      }
-            }
+                    // option added in v2.16.0
+                    filter_selectSource : {
+                        // Alphanumeric match (prefix only)
+                        // added as select2 options (you could also use select2 data option)
+                        2 : function(table, column) {
+                            return ['P&T', 'Lassosum','P_5e-06','P_5e-05','P_5e-09','P_5e-07','P&G'];
+                        }
+                    }
+                }
 
             });
-
-
-
             $("#select_desc").change(function () {
                 var prswt = $(this).val();
                 //console.log("User selection");
@@ -207,34 +197,15 @@
                             });
                    });
 
-            //******************
-
-
-
-
-
-           var $options = $('[id^="option"]');
              $options.on('change', function() {
                   var $elementsToToggle = $('.' + this.value);
                   if (this.checked) {
                     $elementsToToggle.show();
                     console.log("its checked");
-                    //$("tablesorter").trigger("updateAll");
-                    //$('tablesorter').trigger('sortReset');
+                    $("tablesorter").trigger("updateAll");
+                    $('tablesorter').trigger('sortReset');
 
-                    var resort = true, // re-apply the current sort
-                    callback = function() {
-                      // do something after the updateAll method has completed
-                    };
-
-
-
-
-
-
-
-                  }
-                  else {
+                  } else {
                       console.log("its checked");
                     $elementsToToggle.each(function() {
                       var hide = true,
@@ -251,82 +222,10 @@
                         $(elementToToggle).hide();
                     });
                   }
-
-
-
-                    $tblSorter.trigger('refreshWidgets', [true, true]); //REMOVE ALL WIDGETS
-                    $tblSorter[0].config.widgets = ['zebra','filter']; //ADD ZEBRA & SCROLLER
-                    $tblSorter.trigger('applyWidgets');
-
-
-
-                  });
-
-
-
+                });
         });
 
 
-        function toggle() {
-
-             var elm = document.getElementById('option1btn').checked;
-             console.log(elm);
-             var table = document.getElementById("example").rows;
-
-             if(document.getElementById('option1btn').checked)
-                 {
-                    console.log(table.length);
-                    for(i = 0; i < table.length; i++)
-                    {
-                        console.log(table[i].id);
-                        var sd = table[i].style.display;
-
-                        console.log();
-
-                        if(sd == 'none')
-                            {
-                                table[i].style.display='table-row';
-                                table[i].className = "option1";
-
-                            }
-                    }
-                     $('.tablesorter').trigger('refreshWidgets', [true, true]); //REMOVE ALL WIDGETS
-                    $('.tablesorter').config.widgets = ['zebra','filter']; //ADD ZEBRA & SCROLLER
-                   $('.tablesorter').trigger('applyWidgets');
-                 }
-             else
-                 {
-                //console.log(table.length);
-                for(i = 0; i < table.length; i++)
-                {
-                    //console.log(table[i].style.display);
-                    var sd = table[i].style.display;
-
-                    if(sd == 'table-row')
-                        {
-                            table[i].style.display='none';
-
-                        }
-                }
-                 }
-
-
-              // $(".tablesorter").trigger('addRows', "true");
-
-
-
-
-
-
-
-            // if( document.getElementById("hidethis").style.display=='none' ){
-            //    document.getElementById("hidethis").style.display = 'table-row'; // set to table-row instead of an empty string
-            //  }else{
-            //    document.getElementById("hidethis").style.display = 'none';
-            //  }
-
-
-            }
 
 
         function setPhenomeValue(response) {
@@ -484,27 +383,20 @@
 
             <div class="col-md-12 col-sm-12" id="chart1" style="border: 1px solid lightgray; padding:1px">
 
-                <input class="search selectable" type="search" placeholder="Search" data-column="all">
-                <!-- select to change data-column attribute of the above input -->
-                <select class="change-input">
-                    <option value="all">all</option>
-                    <option value="0,3">Columns 0,3</option>
-                    <option value="1-2">Columns 1-2</option>
-                    <option value="0">Rank</option>
-                    <option value="1">First Name</option>
-                    <option value="2">Last Name</option>
-                </select>
-
                 <div class="table-bordered table-responsive text-center">
                     <div id="c2">
-                        <a href="#" id="update">Modify the entire value column</a>
-                        <input type="checkbox" class="searchStatus" data-filter-column="2" data-filter-text="Lassosum"> Lassosum<br>
-                        <label class="display:inline-block;text-align: right;"><input id="option1btn" type="checkbox" value="option1">Show All methods</label>
-                        <label class="display:inline-block;text-align: right;"><input id="option2btn" type="checkbox" value="option2">Show Excluded PRS</label>
-                        <a href="${createLink(action: 'downloadMainTable')}?phecode=${phecode}&phenome=${phenome}&oddratio=${odds}">Download Table <i class="fas fa-download"></i></a>
-                        <button type="button" class="reset">Reset Search</button>
+                        <label class="display:inline-block;text-align: right;"><input id="option1btn" type="checkbox"
+                                                                                      value="option1" >Show All methods
+                        </label>
+                        <label class="display:inline-block;text-align: right;"><input id="option2btn" type="checkbox"
+                                                                                      value="option2">Show Excluded PRS
+                        </label>
+
+                        <a href="${createLink(action: 'downloadMainTable')}?phecode=${phecode}&phenome=${phenome}&oddratio=${odds}">Download Table <i
+                                class="fas fa-download"></i></a>
                     </div>
-                    <table class="table-striped table-bordered table-light table w-100 d-block d-md-table tablesorter" style="border: 1px solid #ddd !important;" id="example">
+                    <table class="table-striped table-bordered table-light table w-100 d-block d-md-table tablesorter"
+                           style="border: 1px solid #ddd !important;" id='example'>
                         <thead class="thead-light">
                         <tr>
 
@@ -540,7 +432,9 @@
                             <th class="sorter-false" data-toggle="popover" data-trigger="hover"
                                 title="Description of phenotype model(s) in GWAS source(s)">Phenotype <br/> Description
                             </th>
-                            <th>Method</th>
+                            <th data-toggle="popover" data-trigger="hover"
+                                title="Used method to generate variant lists and weights for PRS generation, see method tab on top of the page"
+                                class="filter-select filter-match filter-parsed">Method</th>
 
                             <th data-toggle="popover" data-trigger="hover"
                                 title="Number of variants used for PRS generation"># SNPs</th>
@@ -568,7 +462,7 @@
                         <g:each in="${disobj}" var="dobj" status="i">
                             <g:if test="${dobj.method.contains('P_5e')}">
 
-                                <tr id="hidethis" style="display: none;" class="option1">
+                                <tr id="hidethis" style="display:none;" class="option1">
                             </g:if>
                             <g:elseif test="${dobj.nomsig.equals('FALSE') || dobj.warreveff.equals('TRUE')}">
 
@@ -701,9 +595,6 @@
 
                         </tbody>
                     </table>
-
-
-
                 </div>
             </div>
 

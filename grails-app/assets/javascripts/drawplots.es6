@@ -279,6 +279,7 @@ const make_forest_plot_for_id = (df, pheno_id) => {
 const make_forest_plot = (forest_data, title, div_id) => {
     _d.forest_data = forest_data;
 
+    //
     const or_ci_extent = d3.extent(_.flatten(Object.keys(forest_data).map(comp => forest_data[comp].or_ci)).concat([1]));
 
     // TODO: use a dynamic width and height (with minimums)

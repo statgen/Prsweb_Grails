@@ -1,6 +1,14 @@
 package prsweb
 
+import com.google.gson.Gson
+import grails.converters.JSON
+import grails.util.Environment
 import grails.validation.ValidationException
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
+
+import java.text.DecimalFormat
+
 import static org.springframework.http.HttpStatus.*
 
 class PhenotypecatController {
@@ -8,6 +16,7 @@ class PhenotypecatController {
     PhenotypecatService phenotypecatService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)

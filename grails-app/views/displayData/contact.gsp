@@ -5,6 +5,12 @@
         <g:set var="entityName" value="${message(code: 'displayData.label', default: 'DisplayData')}" />
         <title><g:message code="default.show.label" args="[entityName]" /></title>
         <style>
+        .row {
+            position: relative;
+            /* max-width: 1400px; */
+            margin: 0 auto;
+            padding: 0 5%;
+        }
 
         </style>
     </head>
@@ -21,7 +27,7 @@
                 <p>Site created by Snehal Patil, <u>snehal@med.umich.edu</u></p>
                 <br/>
 
-                <p><b>Contributors</b>: Lars G. Fritsche, Snehal Patil, Robert B. Peng, Jiahan Chen, Daniel Taliun, Maxwell Salvatore, and Bhramar Mukherjee
+                <p><b>Contributors</b>:Lars G. Fritsche, Snehal Patil, Lauren J. Beesley, Peter VandeHaar, Maxwell Salvatore, Robert B. Peng, Daniel Taliun, Xiang Zhou, Bhramar Mukherjee
             </p>
                 <br/>
 

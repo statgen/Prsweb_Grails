@@ -3,11 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>
-        <g:layoutTitle default="Grails"/>
-    </title>
+    <title>PRSweb</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <asset:link rel="icon" href="favicon.ico" type="image/x-ico"/>
+
 
     <asset:stylesheet src="application.css"/>
 
@@ -65,9 +63,10 @@
 
         <li><g:link controller="displayData" action="contact "><span class="glyphicon glyphicon-th-list"></span> <i class="far fa-address-card"></i> Contact</g:link></li>
         <li><g:link controller="displayData" action="news"><span class="glyphicon glyphicon-list-alt"></span> <i class="far fa-newspaper"></i> News</g:link></li></li>
-        <li><g:link controller="displayData" action="downloadData"><span class="glyphicon glyphicon-th-list"></span> <i class="fas fa-book-open"></i> Download Data</g:link></li>
+
 
         %{--
+         <li><g:link controller="displayData" action="downloadData"><span class="glyphicon glyphicon-th-list"></span> <i class="fas fa-book-open"></i> Download Data</g:link></li>
          --}%%{--<li><g:link controller="peptides" action="peptidesdataTables"><span class="glyphicon glyphicon-list-alt"></span> Peptides</g:link></li>--}%%{--
           <li><g:link controller="peptides" action="peptideServerCalls" params="[pubid :'',ondiff:'',q:'']">Novel Peptides</g:link></li>--}%
         %{-- <li><g:link controller="publications" action="index">Publications</g:link></li>--}%

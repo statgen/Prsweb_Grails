@@ -15,12 +15,18 @@
     <asset:javascript src="jquery-3.3.1.js"/>
     <asset:javascript src="jquery.tablesorter.min.js"/>
     <asset:javascript src="jquery.tablesorter.widgets.js"/>
+    <asset:javascript src="select2.min.js"/>
     <asset:stylesheet src="theme.blue.css" />
+    <asset:stylesheet src="select2.css" />
+
+    <asset:stylesheet src="magnific-popup.css"/>
+    <asset:javascript src="jquery.magnific-popup.js" />
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 
 
     <g:set var="entityName" value="${message(code: 'displayData.label', default: 'DisplayData')}" />
-    <title><g:message code="default.create.label" args="[entityName]" /></title>
+    <title>PRSweb</title>
     <STYLE>
     div.drilldown { display: inline-block; }
 
@@ -34,12 +40,23 @@
         text-decoration: none;
     }
 
+
     </STYLE>
     <g:javascript library='jquery'>
 
 
             $(function () {
 
+
+                $("#select_desc").select2({
+                theme: "classic"
+                });
+                $("#select_phenomes").select2({theme: "classic",minimumResultsForSearch: -1});
+                $("#select_odds").select2({theme: "classic",minimumResultsForSearch: -1});
+
+                 $('.image-link').magnificPopup({
+              type:'image'
+                 });
 
                 var pcode= '${inputprscode}';
                 var pstudy = '${inprsstudy}';
@@ -71,62 +88,224 @@
 
 
                  var jsonData = JSON.parse('${resultJson}');
-                 //var uniqPhecodesDesc =JSON.parse('${uniqPhecodesDesc}');
-
-
-                  $("#select_desc").change(function () {
-                    var prswt = $(this).val();
-                    //console.log("User selection");
-                    //console.log(prswt);
-                    var phenocat = "Neoplasms";
-
-                    //console.log(jsonData);
-                    $('#select_phenomes').empty();
-
-
-                    var phelist = [];
-                     var methodlist = [];
-
-                    for (var i = 0; i < jsonData.length; i++) {
-                            var counter = jsonData[i];
-                            var phnm1 = counter.phenocatname;
-                            var phid1 = counter.phenocatid;
-                            var resobj1 = counter.phecodeObj;
-
-                            //remove all child nodes
-                              for (var j = 0; j < resobj1.length; j++) {
-                                    var phenome = resobj1[j].phenome;
-                                    var prsmethod = resobj1[j].prsmethod;
-                                    var phecode = resobj1[j].phecode.replace('X','');
-                                   // console.log("input : " + prswt +" loop :"+phecode+";");
-                                    //console.log("input : " + prswt.replace(/\s/g, "").length +" loop : "+phecode.replace(/\s/g, "").length);
 
 
 
-                                    if (phecode == prswt)
-                                        {
-                                            if(!phelist.includes(phenome))
-                                                {
-                                                    phelist.push(phenome);
-                                                    var line = '<option value="'+phenome+'">'+phenome+'</option>';
-                                                    var newOption = line;
+                $("#select_desc").change(function () {
+                var prswt = $(this).val();
+                console.log("User selection");
+                console.log(prswt);
+                 console.log($("#select_phenomes").val().length);
 
-                                                    //console.log(newOption);
-                                                    $('#select_phenomes').append(newOption);
-                                                    $('#select_phenomes').trigger("chosen:updated");
+                 var phenlen = $("#select_phenomes").val().length;
+                 var phenval = $("#select_phenomes").val();
+                var phenocat = "Neoplasms";
 
+                //console.log(jsonData);
 
-                                                }
-
+                $('#select_phenomes').empty();
 
 
+                var phelist = [];
+                 var methodlist = [];
 
-                                        }
+                for (var i = 0; i < jsonData.length; i++) {
+                        var counter = jsonData[i];
+                        var phnm1 = counter.phenocatname;
+                        var phid1 = counter.phenocatid;
+                        var resobj1 = counter.phecodeObj;
 
-                             }
+                        //remove all child nodes
+                          for (var j = 0; j < resobj1.length; j++) {
+                                var phenome = resobj1[j].phenome;
+                                var prsmethod = resobj1[j].prsmethod;
+                                var phecode = resobj1[j].phecode.replace('X','');
+                               // console.log("input : " + prswt +" loop :"+phecode+";");
+                                //console.log("input : " + prswt.replace(/\s/g, "").length +" loop : "+phecode.replace(/\s/g, "").length);
+
+
+
+                                if (phecode == prswt)
+                                    {
+                                        if(!phelist.includes(phenome))
+                                            {
+                                                phelist.push(phenome);
+                                                    if(phenlen == 0 )
+                                                        {
+                                                            console.log("zero legth loop");
+
+                                                             var line = '<option value="'+phenome+'">'+phenome+'</option>';
+
+                                                        }
+                                                    else
+                                                        {
+                                                            console.log("else loop");
+                                                            console.log(phenome);
+                                                            console.log($("#select_phenomes").val());
+                                                            if(phenval == phenome )
+                                                                {
+
+                                                                    var line = '<option selected value="'+phenome+'">'+phenome+'</option>';
+
+                                                                }
+                                                            else
+                                                                {
+                                                                    var line = '<option value="'+phenome+'">'+phenome+'</option>';
+
+                                                                }
+
+                                                        }
+
+                                                var newOption = line;
+
+                                                //console.log(newOption);
+                                                $('#select_phenomes').append(newOption);
+                                                $('#select_phenomes').trigger("chosen:updated");
+
+
+                                            }
+
+
+
+
+                                    }
+
+                         }
+
+
+                    }
+
+                });
+
+
+                $("#select_phenomes").change(function () {
+                      var cohort = $(this).val();
+                console.log("**********************************************");
+                console.log(cohort);
+                var phenocat = "Neoplasms";
+
+                var descval=  $("#select_desc").val();
+                var descvallen =  $("#select_desc").val().length;
+
+                console.log(descvallen);
+                $('#select_desc').empty();
+
+
+                var phelist = [];
+                 var methodlist = [];
+
+
+                 $.ajax({
+                    url: "${createLink(controller:'displayData',action:'getTrait')}",
+                        type: "POST",
+                        async: false,
+                        data: { cohort:cohort},
+                        dataType: 'json',
+
+                    success: function(json) {
+
+                        console.log(json);
+
+                            var $el = $("#select_desc");
+                            $el.empty(); // remove old options
+
+
+
+                            // var jsonData =JSON.parse('${json}');
+
+                              console.log(typeof jsonData);
+
+
+
+
+
+
+
+                            var tbodyup = '';
+
+                             for (var i = 0; i < json.length; i++) {
+                                    var counter = json[i];
+                                   // console.log(counter);
+
+
+                                     var phecodeid = counter.phecodeid;
+                                        var phecodedesc = counter.phdesc;
+                                        console.log(phecodedesc);
+
+                                         console.log(descval);
+                                        if(phecodedesc.includes(descval) && descval != 0 )
+
+                                            {
+                                                console.log("inside found desc");
+                                                    $el.append($("<option></option>")
+                                    .attr("value", phecodeid)
+                                    .text(phecodedesc)
+                                   .prop('selected', true));
+
+                                            }
+                                        else
+                                            {
+                                                $el.append($("<option></option>")
+                                    .attr("value", phecodeid).text(phecodedesc));
+
+                                            }
+
+
+
+
+                                    }
+
+
+
+
+
 
 
                         }
+                    });
+
+
+                /*  for (var i = 0; i < jsonData.length; i++) {
+                        var counter = jsonData[i];
+                        var phnm1 = counter.phenocatname;
+                        var phid1 = counter.phenocatid;
+                        var resobj1 = counter.phecodeObj;
+
+                        //remove all child nodes
+                          for (var j = 0; j < resobj1.length; j++) {
+                                var phenome = resobj1[j].phenome;
+                                var prsmethod = resobj1[j].prsmethod;
+                                var phecode = resobj1[j].phecode.replace('X','');
+                               // console.log("input : " + prswt +" loop :"+phecode+";");
+                                console.log("phenome: "+phenome +" phecode : "+phecode);
+
+
+
+                                if (prsmethod == cohort)
+                                    {
+                                        if(!phelist.includes(phenome))
+                                            {
+                                                phelist.push(phenome);
+                                                var line = '<option value="'+phecode+'">'+phenome+'</option>';
+                                                var newOption = line;
+
+                                                //console.log(newOption);
+                                                $('#select_phenomes').append(newOption);
+                                                $('#select_phenomes').trigger("chosen:updated");
+
+
+                                            }
+
+
+
+
+                                    }
+
+                         }
+
+
+                    }*/
+
 
                 });
 
@@ -502,7 +681,7 @@ signline ='';
                         }
 
 
-                        function createLink(response){
+            function createLink(response){
                      var prswtsel = $("#select_desc").val();
                     var phenocatsel = $("#select_PRS_code").val();
                     var phenomesel = $('#select_phenomes').val();
@@ -592,47 +771,49 @@ signline ='';
 
 
 
+
+
         <div class="row mx-auto my-auto" >
 
 
-                <div class="col-sm-6 col-md-4 col-lg-4">
+                <div class="col-sm-4 col-md-4 col-lg-4">
                     <div class="card border-dark">
-                        <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'tabledata.png')}" alt="GSE" class="card-img-top" width="500" height="300" /></a>
+                        <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">​<picture> <img  src="${resource(dir: 'images', file: 'tabledata.png')}" alt="GSE" class="img-fluid img-thumbnail"   /></picture></a>
                         <div class="card-block">
 
                         </div>
                         <div class="card-footer">
-                            <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">Table View</a>
+                            <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">PRS Evaluation Table </a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4 col-lg-4">
+                    <div class="card border-dark" >
+
+                        <a href="${createLink(action:'showGraphSep')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=578" class="btn stretched-link" target="_blank"><picture><img src="${resource(dir: 'images', file: 'prs2.png')}" alt="GSE" class="img-fluid img-thumbnail"   /></picture></a>
+
+                        <div class="card-block">
+
+                        </div>
+                        <div class="card-footer">
+                            <a href="${createLink(action:'showGraphSep')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=578" class="btn stretched-link" target="_blank">PRS PheWAS </a>
+
+
 
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-4">
                     <div class="card border-dark" >
-
-                        <a href="${createLink(action:'showGraph')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=549" class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'prs.png')}" alt="GSE" class="card-img-top" width="500" height="300" /></a>
-
-                        <div class="card-block">
-
-                        </div>
-                        <div class="card-footer">
-                            <a href="${createLink(action:'showGraph')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=549" class="btn stretched-link" target="_blank">PRS View</a>
-
-
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="card border-dark" >
-                        <a href="${createLink(action:'downloadFile')}?filename=PRSWEB_PHECODE174.1_Onco-iCOGS-ER-positive-BRCA_LASSOSUM_MGI_20191112&type=weight"  class="btn stretched-link" target="_blank"><img src="${resource(dir: 'images', file: 'weightfile.png')}" alt="GSE" class="card-img-top" width="500" height="300"/></a>
+                        <a href="${resource(dir: 'images', file: 'weightfile.png')}" class="image-link" class="btn stretched-link" ><picture><img src="${resource(dir: 'images', file: 'weightfile.png')}" alt="GSE" class="img-fluid img-thumbnail" /></picture></a>
 
 
                         <div class="card-block">
 
                         </div>
                         <div class="card-footer">
-                            <a href="${createLink(action:'downloadFile')}?filename=PRSWEB_PHECODE174.1_Onco-iCOGS-ER-positive-BRCA_LASSOSUM_MGI_20191112&type=weight" class="btn stretched-link" target="_blank">Weight File</a>
+                            <a href="${resource(dir: 'images', file: 'weightfile.png')}" class="image-link" class="btn stretched-link" >PRS Weight File</a>
 
 
                         </div>
@@ -647,11 +828,8 @@ signline ='';
             <div class="col-12 mt-2">
                 <div class="card"><div class="card-body">
 
-                    Integrating published and freely available genome-wide association studies (GWAS) summary statistics from multiple sources: published GWAS, the NHGRI-EBI GWAS Catalog, or UKB-based GWAS, we created an online repository for polygenic risk scores (PRS) for common cancer traits. Our framework condenses these summary statistics into PRS using linkage disequilibrium pruning and p-value thresholding (fixed or data-adaptively optimized thresholds), or penalized, genome-wide effect size weighting.
-                    We evaluate them in the cancer-enriched cohort of the Michigan Genomics Initiative (MGI), a longitudinal biorepository effort at Michigan Medicine, and in the population-based UK Biobank Study (UKB). For each PRS construct, measures on performance, calibration, and differentiation are provided.
-                    Besides the cancer PRS evaluation in MGI and UKB, the PRSweb platform features construct downloads, risk evaluation in the top percentiles as well as phenome-wide PRS association studies (PRS PheWAS) for a subset of PRS that are predictive for the primary cancer.
-                    <br/>
-                    For more information, see our Previous publication on <a href="https://doi.org/10.1101/384909" target="_blank"> skin cancer PRS  </a> and the "Method" tab on top of this page.
+                    Integrating published and freely available genome-wide association studies (GWAS) summary statistics from multiple sources (published GWAS, the NHGRI-EBI GWAS Catalog, or UKB-based GWAS), we created an online repository for polygenic risk scores (PRS) for common cancer traits. Our framework condenses these summary statistics into PRS using linkage disequilibrium pruning and p-value thresholding (fixed or data-adaptively optimized thresholds) or penalized, genome-wide effect size weighting. We evaluate them in the cancer-enriched cohort of the Michigan Genomics Initiative (MGI), a longitudinal biorepository effort at Michigan Medicine, and in the population-based UK Biobank Study (UKB). For each PRS construct, measures on performance, calibration, and discrimination are provided. Beyond the cancer PRS evaluation in MGI and UKB, the PRSweb platform features construct downloads, risk evaluation in the top percentiles, and phenome-wide PRS association studies (PRS-PheWAS) for a subset of PRS that are predictive for the primary cancer. <br/>
+                    For more information, see our bioRxiv preprint  <a href="https://www.biorxiv.org/content/10.1101/2020.01.22.915751v1" target="_blank"> here  </a> and the "Method" tab on top of this page.
                 </div>
                 </div>
             </div>
@@ -673,7 +851,8 @@ signline ='';
 
 
                     <div class="drilldown mr-2">
-                        <label for="select_desc" class="mb-0"> Cancer Trait</label>
+                        <label for="select_desc" class="form-check-label"> Cancer Trait</label><br/>
+
                         <select name="select_desc" id="select_desc" class="form-control">
                             <option value="">Select Cancer Site/Trait</option>
                             <g:each in="${phecodeuniquedata}" status="i" var="dm">
@@ -684,14 +863,16 @@ signline ='';
                     </div>
 
                     <div class="drilldown mr-2">
-                        <label for="select_phenomes"  class="form-check-label">Evaluation Cohort</label>
+                        <label for="select_phenomes"  class="form-check-label">Evaluation Cohort</label><br/>
                         <select name="select_phenomes" id="select_phenomes" class="form-control" >
                             <option value="">Select Cohort</option>
+                            <option value="UKB">UKB</option>
+                            <option value="MGI">MGI</option>
                         </select>
                     </div>
 
                     <div class="drilldown mr-2">
-                        <label for="select_odds"  class="form-check-label">Odds Ratio Top</label>
+                        <label for="select_odds"  class="form-check-label">Odds Ratio Top</label><br/>
                         <select name="select_odds" id="select_odds" class="form-control">
                             <option value="1"> 1% vs Rest </option>
                             <option value="2"> 2% vs Rest </option>

@@ -36,7 +36,7 @@ public class createDisplayData {
             // This will load the MySQL driver, each DB has its own driver
 
 
-            String filepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version7/PRSweb_Update_20191112/PRS_Evaluation_Overview_20191112.txt";
+            String filepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version8/PRSweb_Update_20200114/PRS_Evaluation_Overview_20200114.txt";
 
             try {
 
@@ -106,7 +106,7 @@ public class createDisplayData {
 
                     String genld=tokens[colorder.get("genomeLD")];
                     String source=tokens[colorder.get("source")];
-                    String datecreated="2019-11-12";//tokens[colorder.get("prsweb_date")];
+                    String datecreated="2020-01-14";//tokens[colorder.get("prsweb_date")];
 
                     String topor=tokens[colorder.get("Top_0.01_OR")];
                     String toporci1=tokens[colorder.get("Top_0.01_CI1")];
@@ -131,6 +131,7 @@ public class createDisplayData {
                     String tunparam=tokens[colorder.get("Tuning_Parameters_Clean")];
                     String genome_build=tokens[colorder.get("genome_build")];
                     String gwassource=tokens[colorder.get("gwassource")];
+                    String uploadtoprsweb = tokens[colorder.get("UploadToPRSweb")];
 
                     //"phecode"	"prefix"	"description"	"reference"	"source"	"url"	"n_cases"	"n_controls"	"sex"	"comment"	"outsource"	"prswebprefix"
                     // "genomeLD"	"genomePRS"	"method"	"Predictor"	"Tuning_Parameter"	"SNPs"	"P"	"BETA"	"SEBETA"	"OR"	"OR_CI"	"LOG10P"	"AUC"	"AUC_CI"
@@ -164,8 +165,8 @@ public class createDisplayData {
 //  `prefixdata`, `ncases`, `logpval`, `prswebprefix`, `perunpow`, `sexdata`, `warreveff`, `orcival`, `toporci2`, `source`, `topor`, `toporci1`, `genld`,
 //  `datecreated`, `tunparam`) VALUES ('232', '221', '5656', '5656', '565', '55656', '5656', '56565', '56565', '56565', '5656', '56565', '5656', '565656', '565656', '5656', '5566', '45454', '4545', '4545', '4545', '454545', '4545', '454545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '454545');
             preparedStatement = connect
-                            .prepareStatement("insert into  prsweb.display_data (id, version, aucci, hosm_p, orval, descdata, auc, refdata, urldata, brier_score, pval, phecodedata, prsweb, hosm_chi, ncontrols, nomsig, quaanal, outsource, method, phecat, r2_nage, phenomes, nsnp, prefixdata, ncases, logpval, prswebprefix, perunpow, sexdata, warreveff, orcival, toporci2, source, topor, toporci1, genld, datecreated, tunparam,genomebuild,toporci22, topor2, toporci12,toporci25, topor5, toporci15,gwassource,topor10,toporci110,toporci210,topor25,toporci125,toporci225 ) \n" +
-                                    "values ( ?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                            .prepareStatement("insert into  prsweb.display_data (id, version, aucci, hosm_p, orval, descdata, auc, refdata, urldata, brier_score, pval, phecodedata, prsweb, hosm_chi, ncontrols, nomsig, quaanal, outsource, method, phecat, r2_nage, phenomes, nsnp, prefixdata, ncases, logpval, prswebprefix, perunpow, sexdata, warreveff, orcival, toporci2, source, topor, toporci1, genld, datecreated, tunparam,genomebuild,toporci22, topor2, toporci12,toporci25, topor5, toporci15,gwassource,topor10,toporci110,toporci210,topor25,toporci125,toporci225,uploadtoprsweb) \n" +
+                                    "values ( ?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                     // "myuser, webpage, datum, summary, COMMENTS from feedback.comments");
                     // Parameters start with 1
                     preparedStatement.setDouble(1,count );
@@ -228,6 +229,7 @@ public class createDisplayData {
                     preparedStatement.setString(50,topor25 );
                     preparedStatement.setString(51,toporci125 );
                     preparedStatement.setString(52,toporci225 );
+                    preparedStatement.setString(53,uploadtoprsweb);
 
 
 

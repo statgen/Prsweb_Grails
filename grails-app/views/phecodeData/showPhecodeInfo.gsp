@@ -9,12 +9,21 @@
 <html>
 <head>
     <meta name="layout" content="main" />
+    <r:require module="export"/>
     <asset:javascript src="jquery-3.3.1.js"/>
     <asset:javascript src="jquery.tablesorter.min.js"/>
     <asset:javascript src="jquery.tablesorter.widgets.js"/>
     <asset:stylesheet src="theme.blue.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-<script>
+<style>
+#c2 {
+    padding:5px;
+    float: right;
+    overflow: hidden;
+    white-space: nowrap;
+}
+</style>
+    <script>
 
         /* Documentation for this tablesorter FORK can be found at
  * http://mottie.github.io/tablesorter/docs/
@@ -86,7 +95,16 @@
     <div class="container-fluid">
 
             <div class="row">
+
                 <div class="table-bordered table-responsive fixed-table-body text-center mt-5">
+                    <div id="c2">
+
+                        <export:formats formats="['csv', 'excel']" params="[q:"${q}", fil:"${fil}"]" />
+
+
+                    </div>
+
+
                     <table class="table-striped table-bordered table-light " style="border: 1px solid #ddd !important;" id='icdinfo'>
                         <thead class="thead-light">
                             <th> Phecode ID</th>
