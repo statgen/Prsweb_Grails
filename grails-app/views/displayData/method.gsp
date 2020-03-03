@@ -148,7 +148,7 @@
                             samples and a pairwise correlation cut-off at r<sup>2</sup> <span>&#x3c;</span> 0.1 within 1Mb window. Using the resulting loci, we defined up to five sub-sets of variants with p-values
                 below different thresholds (<5x10<sup>-9 </sup> to <5x10<sup>-5</sup>). These were used to construct a PRS tied to each threshold, where the PRS associated with p-values less than 5x10<sup>-8</sup>
                     is sometimes denoted as “GWAS hits.” For the second PRS construction method, we construct many different PRS across a fine grid of p-value thresholds.
-                    The p-value threshold with the highest cross-validated pseudo-R2 (see PRS Evaluation below) was used to define the more optimized “Pruning and Thresholding (P & T)” PRS.
+                    The p-value threshold with the highest pseudo-R2 (see PRS Evaluation below) was used to define the more optimized “Pruning and Thresholding (P & T)” PRS.
 
                 </p>  <p class="text-justify">
 
@@ -157,7 +157,7 @@
                             from a reference panel. Here, we used 5,000 randomly selected, unrelated samples as the LD reference panel.
                             We applied a MAF filter of 1 % and, in contrast to the other two approaches, only included autosomal variants that overlap between summary
                             statistics, LD reference panel, and target panel. Each “lassosum” run resulted in up to 76 combinations of the elastic net tuning parameters s and λ, and
-                            consequently, in 76 SNP sets with corresponding weights used to construct 76 PRS. We then selected the PRS with the highest cross-validated pseudo-R2 to define the “lassosum” PRS.
+                            consequently, in 76 SNP sets with corresponding weights used to construct 76 PRS. We then selected the PRS with the highest pseudo-R2 to define the “lassosum” PRS.
                 </p>  <p class="text-justify">
                             For each cancer and set of GWAS summary statistics, this approach resulted in up to seven PRS, where PRS with less than 5 included variants were excluded and the available GWAS
                             summary statistics limited the available PRS construction techniques in some cases. Using the R package “Rprs” (https://github.com/statgen/Rprs), the value of each PRS was
@@ -174,7 +174,7 @@
                     </p>  <p class="text-justify">
                     logit (P(Phenotype is present | PRS)) =β<sub>0</sub>+β<sub>PRS</sub> PRS
                 </p>  <p class="text-justify">
-                    We performed a 5-fold cross validation with the R package “caret” (25) to obtain fitted predictors for the actual PRS evaluations. We used Nagelkerke’s pseudo-R2 (26)
+                    We used Nagelkerke’s pseudo-R2 (26)
                     to select the tuning parameters within the “P&T” and lassosum construction methods (P-value for “P&T” SNP sets; s and λ for lassosum) and kept the
                     PRS with the highest pseudo-R2 for further analyses. For each PRS derived for each GWAS source/method combination, we assessed the following
                     performance measures relative to observed disease status in MGI and UKB:

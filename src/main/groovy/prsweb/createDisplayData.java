@@ -36,7 +36,7 @@ public class createDisplayData {
             // This will load the MySQL driver, each DB has its own driver
 
 
-            String filepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version8/PRSweb_Update_20200114/PRS_Evaluation_Overview_20200114.txt";
+            String filepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/PRS_Evaluation_Overview_20200211.txt";
 
             try {
 

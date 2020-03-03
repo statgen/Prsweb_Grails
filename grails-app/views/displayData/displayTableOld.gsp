@@ -17,8 +17,7 @@
     <asset:javascript src="jquery-3.3.1.js"/>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js"></script>
+
     <asset:javascript src="widget-filter-formatter-select2.js" />
 
     <asset:stylesheet href="locuszoom.css"/>
@@ -29,13 +28,46 @@
     <asset:stylesheet src="theme.blue.css"/>
     <asset:javascript src="jquery.tablesorter.js"/>
     <asset:javascript src="jquery.tablesorter.widgets.js"/>
-    <asset:javascript src="widget-filter-formatter-select2.js"/>
+
+    <asset:javascript src="select2.min.js"/>
+    <asset:stylesheet src="select2.css" />
+
+    <asset:stylesheet src="magnific-popup.css"/>
+    <asset:javascript src="jquery.magnific-popup.js" />
+
+    <asset:stylesheet src="datatables.css"/>
+    <asset:javascript src="datatables.js"/>
 
 
 
     <g:set var="entityName" value="${message(code: 'displayData.label', default: 'DisplayData')}"/>
     <title><g:message code="default.create.label" args="[entityName]"/></title>
     <STYLE>
+    div.container {
+        width: 80%;
+    }
+    table.dataTable thead th,
+    table.dataTable tfoot th {
+
+    }
+    table.dataTable thead th,
+    table.dataTable thead td {
+        padding: 1px 1px;
+        border-bottom: 1px solid #111;
+        padding: 5px;
+        font-weight: bold;
+        font-size: 13px;
+        white-space: normal;
+    }
+
+
+    table.dataTable tbody th,
+    table.dataTable tbody td {
+         padding: 4px 5px;
+        font-size: 12px;
+    }
+
+
     div.drilldown {
         display: inline-block;
     }
@@ -82,12 +114,12 @@
 
 
         $(function () {
-            $("#select_desc").select2({ theme: "classic" });
+            $("#select_desc").select2({ });
             $("#select_phenomes").select2({theme: "classic",minimumResultsForSearch: -1});
             $("#select_odds").select2({theme: "classic",minimumResultsForSearch: -1});
             $('[data-toggle="popover"]').popover(  { html:true  });
             var $options = $('[id^="option"]');
-            $('.tablesorter').tablesorter({
+           /* $('.tablesorter').tablesorter({
                 theme: 'blue',
                 widthFixed: true,
                 sortList: [[5,1]],
@@ -134,6 +166,12 @@
                     }
                 }
 
+            });*/
+
+            $('#example').DataTable({
+                destroy: true,
+                "order": [[5, "desc"]],
+                "paging": false
             });
             $("#select_desc").change(function () {
                 var prswt = $(this).val();
@@ -272,7 +310,7 @@
                 var phenocatsel = $("#select_PRS_code").val();
                 var phenomesel = $('#select_phenomes').val();
                 var oddssel = $('#select_odds').val();
-                var filepathlink = '${createLink(action: 'displayTable')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
+                var filepathlink = '${createLink(action: 'displayTableOld')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
                 window.location.href =filepathlink;
         }
 
@@ -343,12 +381,24 @@
                         <label for="select_phenomes" class="form-check-label">Evaluation Cohort</label><br/>
                         <select name="select_phenomes" id="select_phenomes" class="form-control">
 
-                            <g:each in="${phenomes}" status="i" var="dmp">
-                                <option value="${dmp}">${dmp}</option>
-                            </g:each>
 
-                        </select>
-                    </div>
+
+                                    <g:each in="${phenomes}" status="i" var="dmp">
+
+                                        <g:if test="${dmp.equals(phenome)}">
+
+                                            <option value="${dmp}" selected>${dmp}</option>
+                                        </g:if>
+                                        <g:else>
+
+                                            <option value="${dmp}">${dmp}</option>
+
+                                        </g:else>
+                                    </g:each>
+
+
+    </select>
+</div>
 
                     <div class="drilldown mr-2">
 
@@ -384,13 +434,27 @@
                         %{--<g:submitButton name="Search" class="submit"/>--}%
                         <button onclick="createLink()" class="submit">Show table with PRS</button>
                     </div>
+<br/>
+                    <a class="" href="${createLink(uri: '/')}" style="text-decoration:none;">Reset filters</a>
 
                 </div>
             </div>
 
-            <div class="col-md-12 col-sm-12" id="chart1" style="border: 1px solid lightgray; padding:1px">
+            <div class="col-md-12 col-sm-12" id="chart1" style=" padding:1px">
 
-                <div class="table-bordered table-responsive text-center">
+
+
+                <div class="table-bordered table-responsive text-center" >
+
+                        <g:each in="${phecodeuniquedata}" status="i" var="dm">
+                            <g:if test="${dm.phecodeid.equals(phecode)}">
+                                <h4>  ${dm.phecodedesc} with ${phenome} and odds ratio (top ${oddratio}% versus rest)</h4>
+
+                            </g:if>
+
+
+                        </g:each>
+
                     <div id="c2">
                         <label class="display:inline-block;text-align: right;"><input id="option1btn" type="checkbox"
                                                                                       value="option1" >Show All methods
@@ -402,8 +466,7 @@
                         <a href="${createLink(action: 'downloadMainTable')}?phecode=${phecode}&phenome=${phenome}&oddratio=${odds}">Download Table <i
                                 class="fas fa-download"></i></a>
                     </div>
-                    <table class="table-striped table-bordered table-light table w-100 d-block d-md-table tablesorter"
-                           style="border: 1px solid #ddd !important;" id='example'>
+                    <table class="display" style="width:100%" id='example'>
                         <thead class="thead-light">
                         <tr>
 

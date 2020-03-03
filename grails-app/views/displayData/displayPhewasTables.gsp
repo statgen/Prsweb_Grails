@@ -319,13 +319,13 @@
                     <tbody id="insertfirsttable">
                     <g:each var="prop" in="${combinedlist}" index="i">
                         <tr>
-                            <td><a class="intro" href="${createLink(controller: 'phecodeData', action: 'showPhecodeInfoTable')}?phecode=${prop.getCode()}" target="_blank">${prop.getCode()}</a></td></td>
+                            <td><a class="intro" href="${createLink(controller: 'phecodeData', action: 'showPhecodeInfoTable')}?phecode=${prop.getCode()}" target="_blank">${prop.getCode()}</a></td>
                         <td>${prop.getPstring()}</td>
                         <td>${prop.getCategory()}</td>
                         <td>${prop.getSex()}</td>
                         <td>${prop.getPrsp()}</td>
                         <td>${prop.getOr()}</td>
-                        <td>${prop.getCc1()}${prop.getCc2()}</td>
+                        <td>${prop.getCc1()},${prop.getCc2()}</td>
                         <td>${prop.getNumcases()}</td>
                         <td>${prop.getNumcont()}</td>
                         <td>${prop.getExprsp()}</td>

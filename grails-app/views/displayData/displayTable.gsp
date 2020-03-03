@@ -28,8 +28,10 @@
     <asset:javascript src="jquery.tablesorter.widgets.js"/>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js"></script>
+    <asset:javascript src="select2.min.js"/>
+    <asset:stylesheet src="theme.blue.css" />
+    <asset:stylesheet src="select2.css" />
+
     <asset:javascript src="widget-filter-formatter-select2.js"/>
 
 
@@ -43,6 +45,8 @@
     div.drilldown {
         display: inline-block;
     }
+
+
 
     .option1, .option2, .option3, .option4 {
         display: none;
@@ -227,6 +231,25 @@
                       // do something after the updateAll method has completed
                     };
 
+                    var phecode = ${phecode};
+                    var phenome=${phenome};
+                    var oddratio= ${oddratio};
+
+
+                     $.ajax( {
+                            url: "${createLink(controller:'displayData',action:'displayTable')}",
+                            type: "POST",
+                            async: false,
+                            data: { select_desc:phecode,phenomes:phenome,select_odds:oddratio},
+
+
+                            success: myCallback,
+                            error: function() {
+                            alert("fail");
+                            }
+                            } );
+
+
 
 
 
@@ -235,7 +258,7 @@
 
                   }
                   else {
-                      console.log("its checked");
+                      console.log("its not checked");
                     $elementsToToggle.each(function() {
                       var hide = true,
                           elementToToggle = this;
@@ -436,9 +459,20 @@
                     <div class="drilldown mr-2">
                         <label for="select_phenomes" class="form-check-label">Evaluation Cohort</label><br/>
                         <select name="select_phenomes" id="select_phenomes" class="form-control">
-
                             <g:each in="${phenomes}" status="i" var="dmp">
-                                <option value="${dmp}">${dmp}</option>
+
+                                <g:if test="${dm.phenomes.equals(phenome)}">
+
+                                    <option value="${dmp}" selected>${dmp}</option>
+                                </g:if>
+                                        <g:else>
+
+                                            <option value="${dmp}">${dmp}</option>
+
+                                        </g:else>
+
+
+
                             </g:each>
 
                         </select>
@@ -495,7 +529,7 @@
                     <option value="2">Last Name</option>
                 </select>
 
-                <div class="table-bordered table-responsive text-center">
+                <div class="table-bordered table-responsive text-center" >
                     <div id="c2">
                         <a href="#" id="update">Modify the entire value column</a>
                         <input type="checkbox" class="searchStatus" data-filter-column="2" data-filter-text="Lassosum"> Lassosum<br>
@@ -504,7 +538,8 @@
                         <a href="${createLink(action: 'downloadMainTable')}?phecode=${phecode}&phenome=${phenome}&oddratio=${odds}">Download Table <i class="fas fa-download"></i></a>
                         <button type="button" class="reset">Reset Search</button>
                     </div>
-                    <table class="table-striped table-bordered table-light table w-100 d-block d-md-table tablesorter" style="border: 1px solid #ddd !important;" id="example">
+                    <table class="table-striped table-bordered table-light table w-100 d-block d-md-table tablesorter"
+                           style="border: 1px solid #ddd !important;width:100%" id='example'>
                         <thead class="thead-light">
                         <tr>
 

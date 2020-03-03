@@ -28,6 +28,8 @@
     <g:set var="entityName" value="${message(code: 'displayData.label', default: 'DisplayData')}" />
     <title>PRSweb</title>
     <STYLE>
+
+    .row:before, .row:after {display: none !important;}
     div.drilldown { display: inline-block; }
 
     .center {
@@ -687,7 +689,7 @@ signline ='';
                     var phenomesel = $('#select_phenomes').val();
                      var oddssel = $('#select_odds').val();
 
-                      var filepathlink = '${createLink(action:'displayTable')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
+                      var filepathlink = '${createLink(action:'displayTableOld')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
                       window.location.href =filepathlink;
 
 
@@ -778,7 +780,7 @@ signline ='';
 
                 <div class="col-sm-4 col-md-4 col-lg-4">
                     <div class="card border-dark">
-                        <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">​<picture> <img  src="${resource(dir: 'images', file: 'tabledata.png')}" alt="GSE" class="img-fluid img-thumbnail"   /></picture></a>
+                        <a href="${createLink(action:'displayTableOld')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">​<picture> <img  src="${resource(dir: 'images', file: 'tabledata.png')}" alt="GSE" class="img-fluid img-thumbnail"   /></picture></a>
                         <div class="card-block">
 
                         </div>
@@ -806,7 +808,7 @@ signline ='';
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-4">
                     <div class="card border-dark" >
-                        <a href="${resource(dir: 'images', file: 'weightfile.png')}" class="image-link" class="btn stretched-link" ><picture><img src="${resource(dir: 'images', file: 'weightfile.png')}" alt="GSE" class="img-fluid img-thumbnail" /></picture></a>
+                        <a href="${resource(dir: 'images', file: 'weightfile.png')}" class="image-link" class="btn stretched-link" ><picture><img src="${resource(dir: 'images', file: 'weightimage.png')}" alt="GSE" class="img-fluid img-thumbnail" /></picture></a>
 
 
                         <div class="card-block">

@@ -43,12 +43,143 @@ class DisplayDataController {
 
     }
 
+    def poverview() {
+
+        def dispUni = DisplayData.createCriteria()
+        def uniqphecode2 = dispUni.list {
+
+           
+            groupProperty("phecodedata")
+
+
+        }.phecodedata.unique().collect{it.replace("X", '')}
+         println("******************** uniqphecode2 $uniqphecode2")
+
+
+        def c2 = Phecode.createCriteria()
+        // select * from phecode where phecodeid in(select replace(phecodedata,"X",'')  from display_data where prsweb="TRUE" group by phecodedata);
+        def phecodeuniquedata = c2.list {
+            'in'("phecodeid", uniqphecode2)
+            order("phecodeid", "asc")
+
+
+        }
+
+
+        def dispall= DisplayData.getAll()
+
+
+
+        ArrayList <Object> allpheList = new ArrayList<Object>()
+
+
+        def displtest = DisplayData.createCriteria()
+
+        def displcount = displtest.list{
+
+            projections {
+                property('phecodedata')
+                property('phenomes')
+                count('id','total')
+                groupProperty('phecodedata')
+                groupProperty('phenomes')
+
+            }
+
+
+
+        }
+
+        //select phecodedata ,phenomes, count(id) from display_data where uploadtoprsweb='true' and method in ('lassosum','P&T','P&G') group by phecodedata,phenomes;
+
+        def displtest2 = DisplayData.createCriteria()
+
+        def displafil = displtest2.list{
+
+            projections {
+                property('phecodedata')
+                property('phenomes')
+                count('id','total')
+                groupProperty('phecodedata')
+                groupProperty('phenomes')
+                eq("uploadtoprsweb","TRUE")
+                'in'("method",['lassosum','P&T','P&G'])
+
+            }
+
+
+
+        }
+
+        displafil.each{
+
+            println(it)
+        }
+
+
+       // [X204.4, MGI, 22, X204.4, MGI]
+       // [X204.4, UKB, 6, X204.4, UKB]
+
+        def mtotct = 0
+        def mfiltotct=0
+        def utotct=0
+        def ufiltotct=0
+
+
+
+        phecodeuniquedata.each{
+            println(it.phecodeid)
+            LinkedHashMap<String, Object> pheobj = new HashMap<>()
+            def phid= it.phecodeid
+            def phdesc= it.phecodedesc
+            def mgicount=0
+            def ukbcount=0
+            def mgifilcount=0
+            def ukbfilcout= 0
+            displafil.each{
+                if(it[0].replace("X","").equals(phid) && it[1].equals("MGI"))
+                {
+                    mgifilcount = it[2]
+                    mfiltotct=mfiltotct+mgifilcount
+                }
+                if(it[0].replace("X","").equals(phid) && it[1].equals("UKB"))
+                {
+                    ukbfilcout= it[2]
+                    ufiltotct=ufiltotct+ukbfilcout
+                }
+            }
+            displcount.each{
+                if(it[0].replace("X","").equals(phid) && it[1].equals("MGI"))
+                {
+                   mgicount = it[2]
+                    mtotct=mtotct+mgicount
+                }
+                if(it[0].replace("X","").equals(phid) && it[1].equals("UKB"))
+                {
+                   ukbcount= it[2]
+                    utotct=utotct+ukbcount
+                }
+            }
+            pheobj.put("phecodeid",phid)
+            pheobj.put("phecodedesc",phdesc)
+            pheobj.put("mgicount",mgicount)
+            pheobj.put("ukbcount",ukbcount)
+            pheobj.put("ukbfilcout",ukbfilcout)
+            pheobj.put("mgifilcount",mgifilcount)
+            allpheList.add(pheobj)
+        }
+
+        [allpheList:allpheList,mtotct:mtotct,utotct:utotct,ufiltotct:ufiltotct,mfiltotct:mfiltotct]
+
+
+    }
+
     def getTrait()
     {
 
         def cohort = params.cohort.trim()
         println("in gettrait $cohort")
-        println(cohort.size())
+        //println(cohort.size())
 
         def dispUni = DisplayData.createCriteria()
         def cohortspec = dispUni.list{
@@ -347,7 +478,98 @@ class DisplayDataController {
     }
 
 
+    def displayTableOld()
+    {
+        println("params from the displayTableOld $params ")
 
+        //select_desc:153, select_phenomes:MGI, select_odds:1, submit:upload, controller:displayData, format:null, action:displayTable]
+
+        def phecode = params.select_desc
+        def phenome =params.select_phenomes
+        def oddratio = params.select_odds
+
+
+        //this part is needed to display list of cancer traits which has pRsWeb true
+
+        def dispUni = DisplayData.createCriteria()
+        def uniqphecode2 = dispUni.list{
+
+            eq("uploadtoprsweb","TRUE")
+            groupProperty("phecodedata")
+
+
+        }.phecodedata.unique().collect{it.replace("X", '')} //got the list of the phecodes which has prs
+
+
+        def c2= Phecode.createCriteria()
+        // select * from phecode where phecodeid in(select replace(phecodedata,"X",'')  from display_data where prsweb="TRUE" group by phecodedata);
+        def phecodeuniquedata3 = c2.list {
+            'in'("phecodeid", uniqphecode2)
+            order("phecodeid", "asc")
+
+        }
+        //println(phecodeuniquedata3)
+
+        //select distinct(phenomes) from display_data where phecodedata ='X153';
+
+
+        def dispO = DisplayData.createCriteria()
+
+        def tempphecode = "X"+phecode
+
+        def uniPhe = dispO.list{
+
+            eq("phecodedata",tempphecode)
+
+        }.phenomes.unique()
+
+        println(uniPhe)
+
+
+
+
+        //def disobj = DisplayData.findAllWhere(phecodedata: tempphecode)
+
+        def dobj = DisplayData.createCriteria()
+        def disFilObj = dobj.list{
+
+            'eq' ("phecodedata",tempphecode)
+            'eq'("phenomes",phenome)
+        }
+
+
+        println("size of the filtered object")
+        println(disFilObj.phenomes.unique())
+        //To get specific phenomes to selected
+
+
+        DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+        df.setMaximumFractionDigits(600); // 340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+
+        // System.out.println(df.format(1e-571));
+
+        def res =disFilObj.collect{
+            en ->
+                return [refdata: en.refdata, urldata:en.urldata,pid:en.id,phecodedata:en.phecodedata, phenomes:en.phenomes,prefixdata:en.prefixdata,prswebprefix:en.prswebprefix,outsource:en.outsource, descdata:en.descdata, nsnp:en.nsnp, r2_nage:en.r2_nage, brierScore: en.brierScore, auc:en.auc, aucci:en.aucci, hosm_chi:en.hosm_chi, hosm_p:en.hosm_p,prsweb:en.prsweb,pval:en.pval,logpval:en.logpval,orval:en.orval,orcival:en.orcival,method:en.method,nomsig:en.nomsig,warreveff :en.warreveff,perunpow:en.perunpow,quaanal:en.quaanal,
+                        genld :en.genld,source:en.source,datecreated:en.datecreated,topor:en.topor,toporci1: en.toporci1,toporci2:en.toporci2,tunparam:en.tunparam,genomebuild:en.genomebuild, topor2:en.topor2,toporci12:en.toporci12,toporci22:en.toporci22,topor5:en.topor5,toporci15:en.toporci15,toporci25:en.toporci25,topor10:en.topor10,toporci110:en.toporci110,toporci210:en.toporci210, topor25:en.topor25,toporci125:en.toporci125,toporci225:en.toporci225,gwassource:en.gwassource]
+        }
+
+
+
+
+
+
+
+
+        //println(res)
+
+        [phecode:phecode,phenome:phenome, phenomes:uniPhe,odds:oddratio,phecodeuniquedata:phecodeuniquedata3,disobj:res,oddratio:oddratio]
+
+
+    }
+
+
+/*
     def displayTable()
     {
             println("params from the displayParams $params ")
@@ -431,12 +653,12 @@ class DisplayDataController {
 
 
 
-        println(res)
+        //println(res)
 
-        [phecode:phecode,phenome:phenome, phenomes:uniPhe,odds:oddratio,phecodeuniquedata:phecodeuniquedata3,disobj:res]
+        [phecode:phecode,phenome:phenome, phenomes:uniPhe,odds:oddratio,phecodeuniquedata:phecodeuniquedata3,disobj:res,oddratio:oddratio]
 
 
-    }
+    }*/
 
     def method()
     {
@@ -691,7 +913,7 @@ THis part will be needed for the tree view
         def lno  = tokens[0]
         def datadirpath
         if (Environment.current == Environment.DEVELOPMENT) {
-            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version2/PRSweb_Update_20190801/data/'
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/data/'
         } else
         if (Environment.current == Environment.TEST) {
             datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
@@ -851,7 +1073,7 @@ THis part will be needed for the tree view
         def datadirpath
 
         if (Environment.current == Environment.DEVELOPMENT) {
-            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version7/PRSweb_Update_20191112/data/'
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/data/'
         } else
         if (Environment.current == Environment.TEST) {
             datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
@@ -958,7 +1180,7 @@ println(params)
         def fname  = params.filename
         def datadirpath
         if (Environment.current == Environment.DEVELOPMENT) {
-            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version8/PRSweb_Update_20200114/data/'
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/data/'
         } else
         if (Environment.current == Environment.TEST) {
             datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/shareSnehal/data/'
@@ -1028,7 +1250,7 @@ println(params)
 
         def datadirpath = ''
         if (Environment.current == Environment.DEVELOPMENT) {
-            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version8/PRSweb_Update_20200114/data/'
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/data/'
         } else
         if (Environment.current == Environment.TEST) {
             datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version3/PRSweb_Update_20190801/data/'
@@ -1451,7 +1673,7 @@ println(params)
 
         def datadirpath = ''
         if (Environment.current == Environment.DEVELOPMENT) {
-            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version7/PRSweb_Update_20191112/data/'
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/data/'
         } else
         if (Environment.current == Environment.TEST) {
             datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version3/PRSweb_Update_20190801/data/'
@@ -1959,7 +2181,7 @@ println(params)
 
         def datadirpath = ''
         if (Environment.current == Environment.DEVELOPMENT) {
-            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version8/PRSweb_Update_20200114/data/'
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/data/'
         } else if (Environment.current == Environment.TEST) {
             datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version3/PRSweb_Update_20190801/data/'
         } else if (Environment.current == Environment.PRODUCTION) {
@@ -2460,7 +2682,7 @@ println(params)
 
         def datadirpath = ''
         if (Environment.current == Environment.DEVELOPMENT) {
-            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version8/PRSweb_Update_20191112/data/'
+            datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/data/'
         } else
         if (Environment.current == Environment.TEST) {
             datadirpath = '/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version3/PRSweb_Update_20190801/data/'

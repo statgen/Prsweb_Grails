@@ -32,9 +32,9 @@
 <div class="navbar navbar-static-top pb-3" role="navigation">
     <div class="navbar-header">
 
-        <a class="navbar-brand mx-auto mb-2" href="#" style="text-decoration:none;">Cancer-PRSweb</a>
+        <a class="navbar-brand mx-auto mb-2" href="${createLink(uri: '/')}" style="text-decoration:none;">Cancer-PRSweb</a>
         <a class="navbar-brand mx-aut0" href="/#">
-            <a class="navbar-center" href="${createLink(uri: '/')}"><img src="${resource(dir: 'images', file: 'precision3.png')}" alt="GSE" style="height:auto; width: 12em;" /></a>
+            <a class="navbar-center" href="https://sph.umich.edu/precision-health-data-science/" target="_blank"><img src="${resource(dir: 'images', file: 'precision3.png')}" alt="GSE" style="height:auto; width: 12em;" /></a>
 
         </a>
 
@@ -49,7 +49,7 @@
     <ul>
 
         <li><a  href="${createLink(uri: '/')}"><span class="glyphicon glyphicon-home"></span><i class="fas fa-home"></i> Home</a></li>
-        <li><g:link controller="phecodeData" action="searchPhecode"><span class="glyphicon glyphicon-th-list"></span> <i class="fas fa-search"></i> SearchPhecode</g:link></li>
+        <li><g:link controller="phecodeData" action="searchPhecode"><span class="glyphicon glyphicon-th-list"></span> <i class="fas fa-search"></i> Search Phecode</g:link></li>
 %{--        <li><g:link controller="phecodeData" action="index"><span class="glyphicon glyphicon-th-list"></span> <i class="fas fa-search"></i> Phocode data lookup </g:link></li>--}%
 
 
@@ -63,6 +63,7 @@
 
         <li><g:link controller="displayData" action="contact "><span class="glyphicon glyphicon-th-list"></span> <i class="far fa-address-card"></i> Contact</g:link></li>
         <li><g:link controller="displayData" action="news"><span class="glyphicon glyphicon-list-alt"></span> <i class="far fa-newspaper"></i> News</g:link></li></li>
+   <li><g:link controller="displayData" action="poverview"><span class="glyphicon glyphicon-list-alt"></span> <i class="far fa-newspaper"></i> PRS Overview</g:link></li></li>
 
 
         %{--

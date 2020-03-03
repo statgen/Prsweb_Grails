@@ -87,7 +87,7 @@ class PhecodeDataController {
            // def phecodedesc = Phecode.findByPhecodeid(searchterm)
 
            def phecodedesc = Phecode.withCriteria {
-                ilike 'phecodedesc', pdesc + '%'
+                eq 'phecodedesc', pdesc
             }
 
 
