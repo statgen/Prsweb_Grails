@@ -36,7 +36,7 @@ public class createDisplayData {
             // This will load the MySQL driver, each DB has its own driver
 
 
-            String filepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/version10/PRSweb_Update_20200211/PRS_Evaluation_Overview_20200211.txt";
+            String filepath = "/Users/snehalpatil/Documents/GithubProjects/PRSwebData/data/PRS_Evaluation_Overview_20200608.txt";
 
             try {
 
@@ -69,6 +69,21 @@ public class createDisplayData {
                     // Q1Q4_LOG10P	PRS_PHEWAS	NOMINAL_SIGNIFICANT	WARNING_REVERSED_EFFECT	WARNING_PERCENTILES_UNDERPOWERED	WARNING_NO_QUARTILE_ANALYSIS	prsweb_date	method_details	Tuning_Parameters_Clean	genome_build
                     // referenceURL
 
+
+
+
+                    /*phecode	prefix	description	reference	source	url	n_cases	n_controls	sex	comment	outsource	prswebprefix	genomeLD
+                    genomePRS	method	Predictor	Tuning_Parameter	SNPs	Ncontrols.train	Ncases.train	pseudoR2.train	Ncontrols.test
+                    Ncases.test	P	BETA	SEBETA	OR	OR_CI	LOG10P	HosmerLemeshow_ChiSq	HosmerLemeshow_P	BrierScore	AUC	AUC_CI	AAUC
+                    AAUC_CI	COR	R2 (Nagelkerke [Cragg and Uhler])	MSE	Top_0.01_BETA	Top_0.01_SEBETA	Top_0.01_P	Top_0.01_OR	Top_0.01_CI1
+                    Top_0.01_CI2	Top_0.01_LOG10P	Top_0.02_BETA	Top_0.02_SEBETA	Top_0.02_P	Top_0.02_OR	Top_0.02_CI1	Top_0.02_CI2	Top_0.02_LOG10P
+                        Top_0.05_BETA	Top_0.05_SEBETA	Top_0.05_P	Top_0.05_OR	Top_0.05_CI1	Top_0.05_CI2	Top_0.05_LOG10P	Top_0.1_BETA	Top_0.1_SEBETA	Top_0.1_P
+                Top_0.1_OR	Top_0.1_CI1	Top_0.1_CI2	Top_0.1_LOG10P	Top_0.25_BETA	Top_0.25_SEBETA	Top_0.25_P	Top_0.25_OR	Top_0.25_CI1	Top_0.25_CI2
+                Top_0.25_LOG10P	N_Q1	N_Q2	N_Q3	N_Q4	Q1Q2_BETA	Q1Q2_SEBETA	Q1Q2_P	Q1Q2_OR	Q1Q2_CI1	Q1Q2_CI2	Q1Q2_LOG10P	Q1Q3_BETA
+                    Q1Q3_SEBETA	Q1Q3_P	Q1Q3_OR	Q1Q3_CI1	Q1Q3_CI2	Q1Q3_LOG10P	Q1Q4_BETA	Q1Q4_SEBETA	Q1Q4_P	Q1Q4_OR	Q1Q4_CI1	Q1Q4_CI2
+                    Q1Q4_LOG10P	PRS_PHEWAS	NOMINAL_SIGNIFICANT
+                    WARNING_REVERSED_EFFECT	WARNING_NO_QUARTILE_ANALYSIS	prsweb_date	method_details	Tuning_Parameters_Clean	UploadToPRSweb*/
+//AAUC	AAUC_CI
                     String prefixdata=tokens[colorder.get("prefix")];
                     String phecodedata=tokens[colorder.get("phecode")];
                     String descdata=tokens[colorder.get("description")];
@@ -85,6 +100,11 @@ public class createDisplayData {
                     Double brierScore=Double.parseDouble(tokens[colorder.get("BrierScore")]);
                     Double auc=Double.parseDouble(tokens[colorder.get("AUC")]);
                     String aucci=tokens[colorder.get("AUC_CI")];
+
+                    Double aauc=Double.parseDouble(tokens[colorder.get("AAUC")]);
+                    String aaucci=tokens[colorder.get("AAUC_CI")];
+
+
                     //System.out.println(prefixdata+ " : "+tokens[colorder.get("HosmerLemeshow_ChiSq")].isEmpty());
                     Double hosm_chi=tokens[colorder.get("HosmerLemeshow_ChiSq")].isEmpty() ? 0: Double.parseDouble(tokens[colorder.get("HosmerLemeshow_ChiSq")]);
                     Double hosm_p=tokens[colorder.get("HosmerLemeshow_P")].isEmpty()? 0:Double.parseDouble(tokens[colorder.get("HosmerLemeshow_P")]);
@@ -93,7 +113,7 @@ public class createDisplayData {
 
                     String nomsig=tokens[colorder.get("NOMINAL_SIGNIFICANT")]; //nominal_significance
                     String warreveff=tokens[colorder.get("WARNING_REVERSED_EFFECT")];//warning_reversed_effect
-                    String perunpow=tokens[colorder.get("WARNING_PERCENTILES_UNDERPOWERED")];
+                    String perunpow= "0";
                     String quaanal=tokens[colorder.get("WARNING_NO_QUARTILE_ANALYSIS")];
 
                     String pval=tokens[colorder.get("P")];
@@ -101,12 +121,15 @@ public class createDisplayData {
                     String orval=tokens[colorder.get("OR")];
                     String orcival=tokens[colorder.get("OR_CI")];
 
+
+
+
                     String prswebprefix=tokens[colorder.get("prswebprefix")];
                     String method=tokens[colorder.get("method")];
 
                     String genld=tokens[colorder.get("genomeLD")];
                     String source=tokens[colorder.get("source")];
-                    String datecreated="2020-01-14";//tokens[colorder.get("prsweb_date")];
+                    String datecreated="2020-06-20";//tokens[colorder.get("prsweb_date")];
 
                     String topor=tokens[colorder.get("Top_0.01_OR")];
                     String toporci1=tokens[colorder.get("Top_0.01_CI1")];
@@ -132,6 +155,8 @@ public class createDisplayData {
                     String genome_build=tokens[colorder.get("genome_build")];
                     String gwassource=tokens[colorder.get("gwassource")];
                     String uploadtoprsweb = tokens[colorder.get("UploadToPRSweb")];
+
+                    String referenceurl = tokens[colorder.get("referenceURL")];
 
                     //"phecode"	"prefix"	"description"	"reference"	"source"	"url"	"n_cases"	"n_controls"	"sex"	"comment"	"outsource"	"prswebprefix"
                     // "genomeLD"	"genomePRS"	"method"	"Predictor"	"Tuning_Parameter"	"SNPs"	"P"	"BETA"	"SEBETA"	"OR"	"OR_CI"	"LOG10P"	"AUC"	"AUC_CI"
@@ -165,8 +190,8 @@ public class createDisplayData {
 //  `prefixdata`, `ncases`, `logpval`, `prswebprefix`, `perunpow`, `sexdata`, `warreveff`, `orcival`, `toporci2`, `source`, `topor`, `toporci1`, `genld`,
 //  `datecreated`, `tunparam`) VALUES ('232', '221', '5656', '5656', '565', '55656', '5656', '56565', '56565', '56565', '5656', '56565', '5656', '565656', '565656', '5656', '5566', '45454', '4545', '4545', '4545', '454545', '4545', '454545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '4545', '454545');
             preparedStatement = connect
-                            .prepareStatement("insert into  prsweb.display_data (id, version, aucci, hosm_p, orval, descdata, auc, refdata, urldata, brier_score, pval, phecodedata, prsweb, hosm_chi, ncontrols, nomsig, quaanal, outsource, method, phecat, r2_nage, phenomes, nsnp, prefixdata, ncases, logpval, prswebprefix, perunpow, sexdata, warreveff, orcival, toporci2, source, topor, toporci1, genld, datecreated, tunparam,genomebuild,toporci22, topor2, toporci12,toporci25, topor5, toporci15,gwassource,topor10,toporci110,toporci210,topor25,toporci125,toporci225,uploadtoprsweb) \n" +
-                                    "values ( ?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                            .prepareStatement("insert into  prsweb.display_data (id, version, aucci, hosm_p, orval, descdata, auc, refdata, urldata, brier_score, pval, phecodedata, prsweb, hosm_chi, ncontrols, nomsig, quaanal, outsource, method, phecat, r2_nage, phenomes, nsnp, prefixdata, ncases, logpval, prswebprefix, perunpow, sexdata, warreveff, orcival, toporci2, source, topor, toporci1, genld, datecreated, tunparam,genomebuild,toporci22, topor2, toporci12,toporci25, topor5, toporci15,gwassource,topor10,toporci110,toporci210,topor25,toporci125,toporci225,aauc,aauc_ci,uploadtoprsweb,referenceurl) \n" +
+                                    "values ( ?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?, ?, ?, ? , ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                     // "myuser, webpage, datum, summary, COMMENTS from feedback.comments");
                     // Parameters start with 1
                     preparedStatement.setDouble(1,count );
@@ -229,7 +254,11 @@ public class createDisplayData {
                     preparedStatement.setString(50,topor25 );
                     preparedStatement.setString(51,toporci125 );
                     preparedStatement.setString(52,toporci225 );
-                    preparedStatement.setString(53,uploadtoprsweb);
+                    preparedStatement.setDouble(53,aauc);
+                    preparedStatement.setString(54,aaucci);
+                    preparedStatement.setString(55,uploadtoprsweb);
+                    preparedStatement.setString(56,referenceurl);
+
 
 
 

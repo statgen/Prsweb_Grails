@@ -27,8 +27,7 @@
                 <p>Site created by Snehal Patil, <u>snehal@med.umich.edu</u></p>
                 <br/>
 
-                <p><b>Contributors</b>:Lars G. Fritsche, Snehal Patil, Lauren J. Beesley, Peter VandeHaar, Maxwell Salvatore, Robert B. Peng, Daniel Taliun, Xiang Zhou, Bhramar Mukherjee
-            </p>
+                <p><b>Contributors: &nbsp;</b>  Lars G. Fritsche, Snehal Patil, Lauren J. Beesley, Peter VandeHaar, Maxwell Salvatore, Ying Ma, Robert B. Peng, Daniel Taliun, Xiang Zhou, Bhramar Mukherjee</p>
                 <br/>
 
                 <p><b>Project PIs / Correspondence</b>: larsf@umich.edu and bhramar@umich.edu </p>

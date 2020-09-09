@@ -62,7 +62,15 @@ class DisplayData {
     String genomebuild
 
     String gwassource
+
+    Double aauc
+    String aauc_ci
+
+
+
     String uploadtoprsweb//used to display the model first column into the main table
+
+    String referenceurl
 
 
 

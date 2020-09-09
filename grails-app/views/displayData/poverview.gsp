@@ -176,6 +176,8 @@
 
            } );
 
+            $('[data-toggle="popover"]').popover(  { html:true  });
+
 
 
 
@@ -250,10 +252,10 @@
                    <tr>
 
 
-                       <th>Filtered</th>
-                       <th> Total</th>
-                       <th>Filtered</th>
-                       <th> Total</th>
+                       <th data-toggle="popover" data-trigger="hover" title="Positive and nominal association with trait, i.e. P < 0.05 and BETA > 0">Filtered</th>
+                       <th data-toggle="popover" data-trigger="hover" title="Number of analyzes PRS"> Total</th>
+                       <th data-toggle="popover" data-trigger="hover" title="Positive and nominal association with trait, i.e. P < 0.05 and BETA > 0">Filtered</th>
+                       <th data-toggle="popover" data-trigger="hover" title="Number of analyzes PRS"> Total</th>
 
 
                    </tr>
@@ -264,9 +266,9 @@
                                <tr>
                                <td><a class="intro" href="${createLink(controller: 'phecodeData', action: 'showPhecodeInfoTable')}?phecode=${pobj.phecodeid}" target="_blank">${pobj.phecodeid}</a></td>
                                <td>${pobj.phecodedesc}</td>
-                               <td><a class="nav-item nav-link" href="${createLink(action:'displayTableOld')}?select_desc=${pobj.phecodeid}&select_phenomes=MGI&select_odds=1" role="tab">${pobj.mgifilcount}</a></td>
+                               <td><a class="nav-item nav-link" href="${createLink(action:'displayTable')}?select_desc=${pobj.phecodeid}&select_phenomes=MGI&select_odds=1" role="tab">${pobj.mgifilcount}</a></td>
                                <td>${pobj.mgicount}</td>
-                               <td><a class="nav-item nav-link" href="${createLink(action:'displayTableOld')}?select_desc=${pobj.phecodeid}&select_phenomes=UKB&select_odds=1" role="tab">${pobj.ukbfilcout}</a></td>
+                               <td><a class="nav-item nav-link" href="${createLink(action:'displayTable')}?select_desc=${pobj.phecodeid}&select_phenomes=UKB&select_odds=1" role="tab">${pobj.ukbfilcout}</a></td>
                                <td>${pobj.ukbcount}</td>
                                </tr>
 

@@ -50,8 +50,10 @@
             $(function () {
 
 
-                $("#select_desc").select2({
-                theme: "classic"
+                    $("#select_desc").select2({
+                theme: "classic",
+                templateSelection: formatText,
+    templateResult: formatText
                 });
                 $("#select_phenomes").select2({theme: "classic",minimumResultsForSearch: -1});
                 $("#select_odds").select2({theme: "classic",minimumResultsForSearch: -1});
@@ -317,6 +319,10 @@
 
 
             });
+
+function formatText (icon) {
+    return $('<span><i class="fas ' + $(icon.element).data('icon') + '" style="color:#e2062c;"></i> ' + icon.text + '</span>');
+};
 
             function displayInfo(filename)
             {
@@ -689,7 +695,7 @@ signline ='';
                     var phenomesel = $('#select_phenomes').val();
                      var oddssel = $('#select_odds').val();
 
-                      var filepathlink = '${createLink(action:'displayTableOld')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
+                      var filepathlink = '${createLink(action:'displayTable')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
                       window.location.href =filepathlink;
 
 
@@ -780,7 +786,7 @@ signline ='';
 
                 <div class="col-sm-4 col-md-4 col-lg-4">
                     <div class="card border-dark">
-                        <a href="${createLink(action:'displayTableOld')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">​<picture> <img  src="${resource(dir: 'images', file: 'tabledata.png')}" alt="GSE" class="img-fluid img-thumbnail"   /></picture></a>
+                        <a href="${createLink(action:'displayTable')}?select_desc=174.1&select_phenomes=MGI&select_odds=1" class="btn stretched-link" target="_blank">​<picture> <img  src="${resource(dir: 'images', file: 'tabledata.png')}" alt="GSE" class="img-fluid img-thumbnail"   /></picture></a>
                         <div class="card-block">
 
                         </div>
@@ -793,7 +799,7 @@ signline ='';
                 <div class="col-sm-4 col-md-4 col-lg-4">
                     <div class="card border-dark" >
 
-                        <a href="${createLink(action:'showGraphSep')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=578" class="btn stretched-link" target="_blank"><picture><img src="${resource(dir: 'images', file: 'prs2.png')}" alt="GSE" class="img-fluid img-thumbnail"   /></picture></a>
+                        <a href="${createLink(action:'showGraphSep')}?phecode=174.1&model=PUBMED-29059683&phenome=MGI&id=706" class="btn stretched-link" target="_blank"><picture><img src="${resource(dir: 'images', file: 'prs2.png')}" alt="GSE" class="img-fluid img-thumbnail"   /></picture></a>
 
                         <div class="card-block">
 
@@ -808,7 +814,7 @@ signline ='';
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-4">
                     <div class="card border-dark" >
-                        <a href="${resource(dir: 'images', file: 'weightfile.png')}" class="image-link" class="btn stretched-link" ><picture><img src="${resource(dir: 'images', file: 'weightimage.png')}" alt="GSE" class="img-fluid img-thumbnail" /></picture></a>
+                        <a href="${resource(dir: 'images', file: 'weightfile1.png')}" class="image-link" class="btn stretched-link" ><picture><img src="${resource(dir: 'images', file: 'weightimage.png')}" alt="GSE" class="img-fluid img-thumbnail" /></picture></a>
 
 
                         <div class="card-block">
@@ -855,10 +861,23 @@ signline ='';
                     <div class="drilldown mr-2">
                         <label for="select_desc" class="form-check-label"> Cancer Trait</label><br/>
 
+
+
                         <select name="select_desc" id="select_desc" class="form-control">
-                            <option value="">Select Cancer Site/Trait</option>
+                            <option value="">Select Cancer Site/Trait <i class="fa fa-exclamation-triangle" aria-hidden="true"></i></option>
+                       <g:each in="${phecodeuniquedata}" status="i" var="dm">
+                            <g:if test="${!warnignphecode.contains(dm.phecodeid)}">
+
+                                <option value="${dm.phecodeid}"> ${dm.phecodedesc} &nbsp;(${dm.phecodeid})</option>
+                            </g:if>
+
+                        </g:each>
                             <g:each in="${phecodeuniquedata}" status="i" var="dm">
-                                <option value="${dm.phecodeid}">${dm.phecodedesc} &nbsp;(${dm.phecodeid})</option>
+                                <g:if test="${warnignphecode.contains(dm.phecodeid)}">
+                                    <option value="${dm.phecodeid}" data-icon="fa-exclamation-triangle">  ${dm.phecodedesc} &nbsp;(${dm.phecodeid})</option>
+
+                                </g:if>
+
                             </g:each>
                         </select>
 
@@ -896,8 +915,11 @@ signline ='';
                     --}%
 
                     </div>
+                    <div>
+                        <br/>
+                    <i class="fa fa-exclamation-triangle" style="color:#e2062c;"><!-- icon --></i> Sign indicates " No predictive PRS found; weak association between PRS and trait of interest".
 
-
+                    </div>
 
 
                 </div>

@@ -15,7 +15,9 @@
                         <div class="card"><div class="card-body text-justify">
                             <ul>
 
-                                <li> <b>October 31st </b> : Added download image button and download the main table option</li>
+                                <li> <b>October 31, 2019 </b> : Added download image button and download the main table option</li>
+                                <li><b>June 8, 2020  </b> :Updated PRS evaluation by splitting cohort into training (used to obtain tuning parameters) and testing set (used for evaluation). Also PRS evaluation is now adjusted for covariates.</li>
+                                <li><b>August 25, 2020 </b>: Added PRS-CS for traits with full GWAS summary <statistics></statistics></li>
                             </ul>
 
                         </div>

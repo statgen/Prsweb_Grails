@@ -16,9 +16,7 @@
     </script>
     <asset:javascript src="jquery-3.3.1.js"/>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 
-    <asset:javascript src="widget-filter-formatter-select2.js" />
 
     <asset:stylesheet href="locuszoom.css"/>
 
@@ -29,48 +27,26 @@
     <asset:javascript src="jquery.tablesorter.js"/>
     <asset:javascript src="jquery.tablesorter.widgets.js"/>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
     <asset:javascript src="select2.min.js"/>
+    <asset:stylesheet src="theme.blue.css" />
     <asset:stylesheet src="select2.css" />
 
-    <asset:stylesheet src="magnific-popup.css"/>
-    <asset:javascript src="jquery.magnific-popup.js" />
+    <asset:javascript src="widget-filter-formatter-select2.js"/>
 
-    <asset:stylesheet src="datatables.css"/>
-    <asset:javascript src="datatables.js"/>
+
+
 
 
 
     <g:set var="entityName" value="${message(code: 'displayData.label', default: 'DisplayData')}"/>
     <title><g:message code="default.create.label" args="[entityName]"/></title>
     <STYLE>
-    div.container {
-        width: 80%;
-    }
-    table.dataTable thead th,
-    table.dataTable tfoot th {
-
-    }
-    table.dataTable thead th,
-    table.dataTable thead td {
-        padding: 1px 1px;
-        border-bottom: 1px solid #111;
-        padding: 5px;
-        font-weight: bold;
-        font-size: 13px;
-        white-space: normal;
-    }
-
-
-    table.dataTable tbody th,
-    table.dataTable tbody td {
-         padding: 4px 5px;
-        font-size: 12px;
-    }
-
-
     div.drilldown {
         display: inline-block;
     }
+
+
 
     .option1, .option2, .option3, .option4 {
         display: none;
@@ -114,65 +90,58 @@
 
 
         $(function () {
-            $("#select_desc").select2({ });
+
+
+
+
+
+            $("#select_desc").select2({ theme: "classic" });
             $("#select_phenomes").select2({theme: "classic",minimumResultsForSearch: -1});
             $("#select_odds").select2({theme: "classic",minimumResultsForSearch: -1});
             $('[data-toggle="popover"]').popover(  { html:true  });
-            var $options = $('[id^="option"]');
-           /* $('.tablesorter').tablesorter({
+
+            var $tblSorter=$('.tablesorter').tablesorter({
                 theme: 'blue',
                 widthFixed: true,
                 sortList: [[5,1]],
-                widgets: ['zebra', 'stickyHeaders', 'filter'],
-                widgetOptions : {
-                    // Use the $.tablesorter.storage utility to save the most recent filters
-                    scroller_fixedColumns: 2,
-                    scroller_addFixedOverlay: true,
-                    scroller_rowHighlight: 'hover',
-                    scroller_barWidth: null,
+                widgets: ['zebra', 'filter'],
+                 widgetOptions: {
 
-                    filter_saveFilters : true,
-                    // jQuery selector string of an element used to reset the filters
-                    filter_reset : 'button.reset',
-                    // add custom selector elements to the filter row
-                    filter_formatter : {
+             filter_saveFilters : true,
+      // jQuery selector string of an element used to reset the filters
+      filter_reset : 'button.reset',
+      // add custom selector elements to the filter row
 
-                        // Alphanumeric (match)
+        filter_formatter : {
 
+        // Alphanumeric (match)
+        2 : function($cell, indx) {
+          return $.tablesorter.filterFormatter.select2( $cell, indx, {
+            match : true,         // adds "filter-match" to header
+            cellText : 'Match: ', // Cell text
+            width: '85%',         // adjusted width to allow for cell text
+            value: ['Lassosum', 'P&G'] // initial values
+          });
+        }
 
-                        // Alphanumeric (exact)
-                        1 : function($cell, indx) {
-                            return $.tablesorter.filterFormatter.select2( $cell, indx, {
-                                match : false // exact match only
-                            });
-                        },
-                        2 : function($cell, indx) {
-                            return $.tablesorter.filterFormatter.select2( $cell, indx, {
-                                match : true,         // adds "filter-match" to header
-                                cellText : 'Match: ', // Cell text
-                                width: '85%',         // adjusted width to allow for cell text
-                                value: ['Lassosum','P&T','P&G'] // initial values
-                            });
-                        }
-                    },
+        // Alphanumeric (exact)
 
-                    // option added in v2.16.0
-                    filter_selectSource : {
-                        // Alphanumeric match (prefix only)
-                        // added as select2 options (you could also use select2 data option)
-                        2 : function(table, column) {
-                            return ['P&T', 'Lassosum','P_5e-06','P_5e-05','P_5e-09','P_5e-07','P&G'];
-                        }
-                    }
-                }
+      },
 
-            });*/
+      // option added in v2.16.0
+      filter_selectSource : {
+        // Alphanumeric match (prefix only)
+        // added as select2 options (you could also use select2 data option)
+        2 : function(table, column) {
+          return ['Lassosum', 'P&G'];
+        }
+      }
+            }
 
-            $('#example').DataTable({
-                destroy: true,
-                "order": [[5, "desc"]],
-                "paging": false
             });
+
+
+
             $("#select_desc").change(function () {
                 var prswt = $(this).val();
                 //console.log("User selection");
@@ -242,16 +211,54 @@
                             });
                    });
 
+            //******************
+
+
+
+
+
+           var $options = $('[id^="option"]');
              $options.on('change', function() {
                   var $elementsToToggle = $('.' + this.value);
                   if (this.checked) {
                     $elementsToToggle.show();
                     console.log("its checked");
-                    $("tablesorter").trigger("updateAll");
+                    //$("tablesorter").trigger("updateAll");
+                    //$('tablesorter').trigger('sortReset');
+
+                    var resort = true, // re-apply the current sort
+                    callback = function() {
+                      // do something after the updateAll method has completed
+                    };
+
+                    var phecode = ${phecode};
+                    var phenome=${phenome};
+                    var oddratio= ${oddratio};
 
 
-                  } else {
-                      console.log("its checked");
+                     $.ajax( {
+                            url: "${createLink(controller:'displayData',action:'displayTable')}",
+                            type: "POST",
+                            async: false,
+                            data: { select_desc:phecode,phenomes:phenome,select_odds:oddratio},
+
+
+                            success: myCallback,
+                            error: function() {
+                            alert("fail");
+                            }
+                            } );
+
+
+
+
+
+
+
+
+                  }
+                  else {
+                      console.log("its not checked");
                     $elementsToToggle.each(function() {
                       var hide = true,
                           elementToToggle = this;
@@ -267,10 +274,82 @@
                         $(elementToToggle).hide();
                     });
                   }
-                });
+
+
+
+                    $tblSorter.trigger('refreshWidgets', [true, true]); //REMOVE ALL WIDGETS
+                    $tblSorter[0].config.widgets = ['zebra','filter']; //ADD ZEBRA & SCROLLER
+                    $tblSorter.trigger('applyWidgets');
+
+
+
+                  });
+
+
+
         });
 
 
+        function toggle() {
+
+             var elm = document.getElementById('option1btn').checked;
+             console.log(elm);
+             var table = document.getElementById("example").rows;
+
+             if(document.getElementById('option1btn').checked)
+                 {
+                    console.log(table.length);
+                    for(i = 0; i < table.length; i++)
+                    {
+                        console.log(table[i].id);
+                        var sd = table[i].style.display;
+
+                        console.log();
+
+                        if(sd == 'none')
+                            {
+                                table[i].style.display='table-row';
+                                table[i].className = "option1";
+
+                            }
+                    }
+                     $('.tablesorter').trigger('refreshWidgets', [true, true]); //REMOVE ALL WIDGETS
+                    $('.tablesorter').config.widgets = ['zebra','filter']; //ADD ZEBRA & SCROLLER
+                   $('.tablesorter').trigger('applyWidgets');
+                 }
+             else
+                 {
+                //console.log(table.length);
+                for(i = 0; i < table.length; i++)
+                {
+                    //console.log(table[i].style.display);
+                    var sd = table[i].style.display;
+
+                    if(sd == 'table-row')
+                        {
+                            table[i].style.display='none';
+
+                        }
+                }
+                 }
+
+
+              // $(".tablesorter").trigger('addRows', "true");
+
+
+
+
+
+
+
+            // if( document.getElementById("hidethis").style.display=='none' ){
+            //    document.getElementById("hidethis").style.display = 'table-row'; // set to table-row instead of an empty string
+            //  }else{
+            //    document.getElementById("hidethis").style.display = 'none';
+            //  }
+
+
+            }
 
 
         function setPhenomeValue(response) {
@@ -310,7 +389,7 @@
                 var phenocatsel = $("#select_PRS_code").val();
                 var phenomesel = $('#select_phenomes').val();
                 var oddssel = $('#select_odds').val();
-                var filepathlink = '${createLink(action: 'displayTableOld')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
+                var filepathlink = '${createLink(action: 'displayTable')}?select_desc='+ prswtsel+'&select_phenomes='+phenomesel+'&select_odds='+oddssel;
                 window.location.href =filepathlink;
         }
 
@@ -380,25 +459,24 @@
                     <div class="drilldown mr-2">
                         <label for="select_phenomes" class="form-check-label">Evaluation Cohort</label><br/>
                         <select name="select_phenomes" id="select_phenomes" class="form-control">
+                            <g:each in="${phenomes}" status="i" var="dmp">
 
+                                <g:if test="${dm.phenomes.equals(phenome)}">
 
-
-                                    <g:each in="${phenomes}" status="i" var="dmp">
-
-                                        <g:if test="${dmp.equals(phenome)}">
-
-                                            <option value="${dmp}" selected>${dmp}</option>
-                                        </g:if>
+                                    <option value="${dmp}" selected>${dmp}</option>
+                                </g:if>
                                         <g:else>
 
                                             <option value="${dmp}">${dmp}</option>
 
                                         </g:else>
-                                    </g:each>
 
 
-    </select>
-</div>
+
+                            </g:each>
+
+                        </select>
+                    </div>
 
                     <div class="drilldown mr-2">
 
@@ -434,39 +512,34 @@
                         %{--<g:submitButton name="Search" class="submit"/>--}%
                         <button onclick="createLink()" class="submit">Show table with PRS</button>
                     </div>
-<br/>
-                    <a class="" href="${createLink(uri: '/')}" style="text-decoration:none;">Reset filters</a>
 
                 </div>
             </div>
 
-            <div class="col-md-12 col-sm-12" id="chart1" style=" padding:1px">
+            <div class="col-md-12 col-sm-12" id="chart1" style="border: 1px solid lightgray; padding:1px">
 
-
+                <input class="search selectable" type="search" placeholder="Search" data-column="all">
+                <!-- select to change data-column attribute of the above input -->
+                <select class="change-input">
+                    <option value="all">all</option>
+                    <option value="0,3">Columns 0,3</option>
+                    <option value="1-2">Columns 1-2</option>
+                    <option value="0">Rank</option>
+                    <option value="1">First Name</option>
+                    <option value="2">Last Name</option>
+                </select>
 
                 <div class="table-bordered table-responsive text-center" >
-
-                        <g:each in="${phecodeuniquedata}" status="i" var="dm">
-                            <g:if test="${dm.phecodeid.equals(phecode)}">
-                                <h4>  ${dm.phecodedesc} with ${phenome} and odds ratio (top ${oddratio}% versus rest)</h4>
-
-                            </g:if>
-
-
-                        </g:each>
-
                     <div id="c2">
-                        <label class="display:inline-block;text-align: right;"><input id="option1btn" type="checkbox"
-                                                                                      value="option1" >Show All methods
-                        </label>
-                        <label class="display:inline-block;text-align: right;"><input id="option2btn" type="checkbox"
-                                                                                      value="option2">Show Excluded PRS
-                        </label>
-
-                        <a href="${createLink(action: 'downloadMainTable')}?phecode=${phecode}&phenome=${phenome}&oddratio=${odds}">Download Table <i
-                                class="fas fa-download"></i></a>
+                        <a href="#" id="update">Modify the entire value column</a>
+                        <input type="checkbox" class="searchStatus" data-filter-column="2" data-filter-text="Lassosum"> Lassosum<br>
+                        <label class="display:inline-block;text-align: right;"><input id="option1btn" type="checkbox" value="option1">Show All methods</label>
+                        <label class="display:inline-block;text-align: right;"><input id="option2btn" type="checkbox" value="option2">Show Excluded PRS</label>
+                        <a href="${createLink(action: 'downloadMainTable')}?phecode=${phecode}&phenome=${phenome}&oddratio=${odds}">Download Table <i class="fas fa-download"></i></a>
+                        <button type="button" class="reset">Reset Search</button>
                     </div>
-                    <table class="display" style="width:100%" id='example'>
+                    <table class="table-striped table-bordered table-light table w-100 d-block d-md-table tablesorter"
+                           style="border: 1px solid #ddd !important;width:100%" id='example'>
                         <thead class="thead-light">
                         <tr>
 
@@ -502,9 +575,7 @@
                             <th class="sorter-false" data-toggle="popover" data-trigger="hover"
                                 title="Description of phenotype model(s) in GWAS source(s)">Phenotype <br/> Description
                             </th>
-                            <th data-toggle="popover" data-trigger="hover"
-                                title="Used method to generate variant lists and weights for PRS generation, see method tab on top of the page"
-                                class="filter-select filter-match filter-parsed">Method</th>
+                            <th>Method</th>
 
                             <th data-toggle="popover" data-trigger="hover"
                                 title="Number of variants used for PRS generation"># SNPs</th>
@@ -532,7 +603,7 @@
                         <g:each in="${disobj}" var="dobj" status="i">
                             <g:if test="${dobj.method.contains('P_5e')}">
 
-                                <tr id="hidethis" style="display:none;" class="option1">
+                                <tr id="hidethis" style="display: none;" class="option1">
                             </g:if>
                             <g:elseif test="${dobj.nomsig.equals('FALSE') || dobj.warreveff.equals('TRUE')}">
 
@@ -665,6 +736,9 @@
 
                         </tbody>
                     </table>
+
+
+
                 </div>
             </div>
 
