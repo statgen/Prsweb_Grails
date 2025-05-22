@@ -39,18 +39,18 @@ Ensure the following are installed:
 #### 1. Clone the Repository
 
 git clone https://github.com/statgen/Prsweb_Grails.git
-``cd Prsweb_Grails```
+<pre> cd Prsweb_Grails  </pre>
 
 
 
 #### 2.** Configure the Application**
 Edit the configuration in grails-app/conf/application.yml or grails-app/conf/application.groovy to set database credentials, e.g.:
 
-```dataSource:
+<pre> dataSource:
   driverClassName: com.mysql.cj.jdbc.Driver
   url: jdbc:mysql://localhost:3306/prswebdb
   username: root
-  password: your_password```
+  password: your_password</pre>
 
   grails run-app
 The application will be available at http://localhost:8080.
@@ -58,7 +58,7 @@ The application will be available at http://localhost:8080.
 ## Production Deployment (Manual)
 #### 1. Create WAR
 
-```grails war```
+<pre>grails war</pre>
 
 #### 2. Deploy the WAR on Tomcat or Jetty
 Place the generated .war file in the webapps directory of your server.
@@ -67,12 +67,12 @@ Place the generated .war file in the webapps directory of your server.
 Use production profile in application.yml or environment-specific settings:
 
 
-``environments:
+<pre>environments:
   production:
     dataSource:
       url: jdbc:mysql://host:3306/prswebdb
       username: prod_user
-      password: prod_pass```
+      password: prod_pass</pre>
 
 
 
